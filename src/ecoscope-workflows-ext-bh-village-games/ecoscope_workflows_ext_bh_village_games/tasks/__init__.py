@@ -8,6 +8,7 @@ from ._village_games import (
     draw_activity_leaderboard,
     draw_village_icon_bar,
     draw_all_villages_icon_bar,
+    render_vg_report,
 )
 
 
@@ -19,4 +20,5 @@ __all__ = [
     "draw_activity_leaderboard",
     "draw_village_icon_bar",
     "draw_all_villages_icon_bar",
+    "render_vg_report",
 ]
