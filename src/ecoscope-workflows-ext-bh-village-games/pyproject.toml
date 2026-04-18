@@ -62,10 +62,21 @@ jinja2 = "*"
 pandera = ">0.20.0"
 pydantic = "<2.9.0"
 pydantic-settings = "*"
+#py-rattler = ">=0.15.0,<0.16"
 "ruamel.yaml" = "*"
 ruff = "*"
 tomli-w = "*"
-ecoscope-workflows-core = ">=0.18.0"
+ecoscope-workflows-core = ">=0.19.4"
+ecoscope-workflows-ext-ecoscope = ">=0.19.4"
+ecoscope-workflows-ext-custom = "0.0.41.*"
+ecoscope-workflows-ext-ste = "0.0.18.*"
+plotly = "*"
+geopandas = "*"
+python-docx="*"
+playwright="*"
+fiona = "*"
+matplotlib = ">=3.7"
+
 
 # additional dependencies added by this extension
 
@@ -85,6 +96,12 @@ python = "3.11.*"
 python = "3.12.*"
 [tool.pixi.feature.test.dependencies]
 pytest = "*"
+matplotlib = "*"
+pytest = "*"
+geopandas = "*"
+fiona = "*"
+shapely = "*"
+matplotlib = "*" 
 
 [tool.pixi.environments]
 default = { solve-group = "default" }
