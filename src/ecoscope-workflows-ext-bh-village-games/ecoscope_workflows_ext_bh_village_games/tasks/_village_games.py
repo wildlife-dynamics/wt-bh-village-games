@@ -1168,3 +1168,162 @@ def draw_all_villages_icon_bar(
         ),
     )
     return _fig_to_html(fig)
+
+
+# ─────────────────────────────────────────────
+# SCRIPT 7 — VILLAGE GAMES REPORT RENDERER
+# ─────────────────────────────────────────────
+@task
+def render_vg_report(
+    template_path: Annotated[str, Field(description="Path to the Jinja2 .docx template")],
+    output_path: Annotated[str, Field(description="Directory to write the rendered report")],
+    report_year: Annotated[str, Field(description="Report year string, e.g. '2024'")],
+    generation_date: Annotated[str, Field(description="Human-readable generation date")],
+    # ── Section 1: Community Feedback Tables ──────────────
+    feedback_poaching_png: Annotated[list, Field(description="Keyed list of feedback poaching PNGs")],
+    feedback_mangrove_png: Annotated[list, Field(description="Keyed list of feedback mangrove PNGs")],
+    feedback_fishing_png: Annotated[list, Field(description="Keyed list of feedback fishing PNGs")],
+    feedback_arrests_png: Annotated[list, Field(description="Keyed list of feedback arrests PNGs")],
+    feedback_turtles_png: Annotated[list, Field(description="Keyed list of feedback turtles PNGs")],
+    # ── Section 2: Monthly Heatmap ─────────────────────────
+    monthly_heatmap_png: Annotated[list, Field(description="Keyed list of monthly heatmap PNGs")],
+    # ── Section 3: Donut Charts ────────────────────────────
+    donut_darakasi_watamu_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_dongokundu_sita_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_jacaranda_kanani_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_kanani_darakasi_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_kivunjeni_wesa_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_magangani_mida_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_marafiki_uyombo_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_mawe_jacaranda_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_mid_mayungu_mawe_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_mida_marafiki_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_sita_magangani_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_uyombo_kivunjeni_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    donut_watamu_dongokundu_png: Annotated[list, Field(description="Keyed list of donut PNGs")],
+    # ── Section 4: Leaderboards ────────────────────────────
+    lb_poaching_png: Annotated[list, Field(description="Keyed list of leaderboard PNGs")],
+    lb_mangrove_png: Annotated[list, Field(description="Keyed list of leaderboard PNGs")],
+    lb_fishing_png: Annotated[list, Field(description="Keyed list of leaderboard PNGs")],
+    lb_arrests_png: Annotated[list, Field(description="Keyed list of leaderboard PNGs")],
+    # ── Section 5: Per-Village Icon Bars ──────────────────
+    ibar_darakasi_watamu_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_dongokundu_sita_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_magangani_mida_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_uyombo_kivunjeni_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_watamu_dongokundu_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_mida_marafiki_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_mawe_jacaranda_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_mid_mayungu_mawe_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_marafiki_uyombo_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_kivunjeni_wesa_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_kanani_darakasi_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    ibar_jacaranda_kanani_png: Annotated[list, Field(description="Keyed list of icon bar PNGs")],
+    # ── Section 6: All-Villages Summary ───────────────────
+    all_villages_icon_bar_png: Annotated[list, Field(description="Keyed list of all-villages bar PNGs")],
+    # ── Section 7: Maps ───────────────────────────────────
+    illegal_events_map_png: Annotated[list, Field(description="Keyed list of illegal events map PNGs")],
+    poaching_map_png: Annotated[list, Field(description="Keyed list of poaching map PNGs")],
+    mangrove_map_png: Annotated[list, Field(description="Keyed list of mangrove map PNGs")],
+    illegal_fishing_map_png: Annotated[list, Field(description="Keyed list of illegal fishing map PNGs")],
+    arrests_map_png: Annotated[list, Field(description="Keyed list of arrests map PNGs")],
+) -> Annotated[str, Field(description="Path to the rendered report file")]:
+    """
+    Render the Village Games Word report from a Jinja2 .docx template.
+
+    All PNG arguments are keyed lists produced by mapvalues + html_to_png.
+    Each list is a list of (key, path) tuples; this task picks the value
+    from the first tuple in each list, matching the pattern used throughout
+    the ecoscope-workflows ecosystem.
+
+    Requires: docxtpl (pip install docxtpl)
+    """
+    from docxtpl import DocxTemplate, InlineImage
+    from docx.shared import Inches
+    from pathlib import Path as _Path
+
+    logger.info("render_vg_report: starting")
+
+    def _pick(keyed_list: list) -> str:
+        """
+        Extract a single file path from a mapvalues keyed list.
+        Each element is a (key_tuple, value) pair — we just want the value
+        from the first element, matching how ecoscope-workflows returns results.
+        """
+        if not keyed_list:
+            raise ValueError("Received an empty list — no PNG was produced upstream.")
+        first = keyed_list[0]
+        # keyed list entries are (key, value) tuples
+        if isinstance(first, (list, tuple)) and len(first) == 2:
+            return str(first[1])
+        # fallback: already a plain path string
+        return str(first)
+
+    tpl = DocxTemplate(template_path)
+
+    def _img(keyed_list: list, width_in: float = 6.8) -> InlineImage:
+        path = _pick(keyed_list)
+        return InlineImage(tpl, path, width=Inches(width_in))
+
+    context = {
+        "report_year": str(report_year),
+        "generation_date": str(generation_date),
+        # Section 1
+        "feedback_poaching_png": _img(feedback_poaching_png, 6.8),
+        "feedback_mangrove_png": _img(feedback_mangrove_png, 6.8),
+        "feedback_fishing_png": _img(feedback_fishing_png, 6.8),
+        "feedback_arrests_png": _img(feedback_arrests_png, 6.8),
+        "feedback_turtles_png": _img(feedback_turtles_png, 6.8),
+        # Section 2
+        "monthly_heatmap_png": _img(monthly_heatmap_png, 7.0),
+        # Section 3
+        "donut_darakasi_watamu_png": _img(donut_darakasi_watamu_png, 6.5),
+        "donut_dongokundu_sita_png": _img(donut_dongokundu_sita_png, 6.5),
+        "donut_jacaranda_kanani_png": _img(donut_jacaranda_kanani_png, 6.5),
+        "donut_kanani_darakasi_png": _img(donut_kanani_darakasi_png, 6.5),
+        "donut_kivunjeni_wesa_png": _img(donut_kivunjeni_wesa_png, 6.5),
+        "donut_magangani_mida_png": _img(donut_magangani_mida_png, 6.5),
+        "donut_marafiki_uyombo_png": _img(donut_marafiki_uyombo_png, 6.5),
+        "donut_mawe_jacaranda_png": _img(donut_mawe_jacaranda_png, 6.5),
+        "donut_mid_mayungu_mawe_png": _img(donut_mid_mayungu_mawe_png, 6.5),
+        "donut_mida_marafiki_png": _img(donut_mida_marafiki_png, 6.5),
+        "donut_sita_magangani_png": _img(donut_sita_magangani_png, 6.5),
+        "donut_uyombo_kivunjeni_png": _img(donut_uyombo_kivunjeni_png, 6.5),
+        "donut_watamu_dongokundu_png": _img(donut_watamu_dongokundu_png, 6.5),
+        # Section 4
+        "lb_poaching_png": _img(lb_poaching_png, 6.8),
+        "lb_mangrove_png": _img(lb_mangrove_png, 6.8),
+        "lb_fishing_png": _img(lb_fishing_png, 6.8),
+        "lb_arrests_png": _img(lb_arrests_png, 6.8),
+        # Section 5
+        "ibar_darakasi_watamu_png": _img(ibar_darakasi_watamu_png, 6.8),
+        "ibar_dongokundu_sita_png": _img(ibar_dongokundu_sita_png, 6.8),
+        "ibar_magangani_mida_png": _img(ibar_magangani_mida_png, 6.8),
+        "ibar_uyombo_kivunjeni_png": _img(ibar_uyombo_kivunjeni_png, 6.8),
+        "ibar_watamu_dongokundu_png": _img(ibar_watamu_dongokundu_png, 6.8),
+        "ibar_mida_marafiki_png": _img(ibar_mida_marafiki_png, 6.8),
+        "ibar_mawe_jacaranda_png": _img(ibar_mawe_jacaranda_png, 6.8),
+        "ibar_mid_mayungu_mawe_png": _img(ibar_mid_mayungu_mawe_png, 6.8),
+        "ibar_marafiki_uyombo_png": _img(ibar_marafiki_uyombo_png, 6.8),
+        "ibar_kivunjeni_wesa_png": _img(ibar_kivunjeni_wesa_png, 6.8),
+        "ibar_kanani_darakasi_png": _img(ibar_kanani_darakasi_png, 6.8),
+        "ibar_jacaranda_kanani_png": _img(ibar_jacaranda_kanani_png, 6.8),
+        # Section 6
+        "all_villages_icon_bar_png": _img(all_villages_icon_bar_png, 7.0),
+        # Section 7
+        "illegal_events_map_png": _img(illegal_events_map_png, 6.8),
+        "poaching_map_png": _img(poaching_map_png, 6.8),
+        "mangrove_map_png": _img(mangrove_map_png, 6.8),
+        "illegal_fishing_map_png": _img(illegal_fishing_map_png, 6.8),
+        "arrests_map_png": _img(arrests_map_png, 6.8),
+    }
+
+    tpl.render(context)
+
+    out_dir = _Path(output_path)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_file = out_dir / f"village_games_report_{report_year}.docx"
+    tpl.save(str(out_file))
+
+    logger.info(f"render_vg_report: saved to {out_file}")
+    return str(out_file)
