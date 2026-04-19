@@ -3,7 +3,7 @@ name = "wt-bh-village-games"
 channels = [
     # Uncomment the following lines to use local channels for development.
     # "file:///tmp/ecoscope-workflows/release/artifacts/",
-    # "file:///tmp/ecoscope-workflows-custom/release/artifacts/",
+    "file:///tmp/ecoscope-workflows-custom/release/artifacts/",
     'https://repo.prefix.dev/ecoscope-workflows/',
     'https://repo.prefix.dev/ecoscope-workflows-custom/',
     'conda-forge',
@@ -15,17 +15,35 @@ curl = "*"
 rattler-build = "*"
 yq = "*"
 hatch = "*"
+playwright = ">=1.58.1,<2"
+python = "3.12.*"
+typing-extensions = ">=4.12.0"
+hatch-vcs = ">=0.5.0,<0.6"
 
 [feature.compile.dependencies]
 # Include this if you add new tasks and the package has been built
-# ecoscope-workflows-ext-bh-village-games = "*"
+#ecoscope-workflows-ext-bahari-hai = "*"
+ecoscope-workflows-ext-bh-village-games = { version = "*", channel = "file:///tmp/ecoscope-workflows-custom/release/artifacts/" }
+geopandas = "*"
+fiona = "*"                        
+shapely = "*"
+pyproj = "*"
+rtree = "*"
+matplotlib = ">=3.7"
+ecoscope-workflows-core = ">=0.19.4"
+ecoscope-workflows-ext-ecoscope = ">=0.19.4"
+ecoscope-workflows-ext-custom = "0.0.28.*"
+ecoscope-workflows-ext-ste = "0.0.18.*"
+ecoscope-workflows-ext-bahari-hai ="0.0.16"
+python = "3.12.*"
+typing-extensions = ">=4.12.0"
 
-ecoscope-workflows-core = "0.18.0.*"
+#ecoscope-workflows-core = ">=0.19.4"
 # Here we don't specify the channel on purpose, as we want to use the local channel if it exists,
 # otherwise we fall back to the remote channel.
 # If you want to ensure a specific channel to incorporate your local changes, you can uncomment the line below.
 # ecoscope-workflows-core = { version = "*", channel = "file:///tmp/ecoscope-workflows/release/artifacts/" }
-# ecoscope-workflows-ext-bh-village-games = { version = "*", channel = "file:///tmp/ecoscope-workflows-custom/release/artifacts/" }
+#ecoscope-workflows-ext-bh-village-games = { version = "*", channel = "file:///tmp/ecoscope-workflows-custom/release/artifacts/" }
 
 [environments]
 compile = { features = [
