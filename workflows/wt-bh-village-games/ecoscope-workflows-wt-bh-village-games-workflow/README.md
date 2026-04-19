@@ -6,7 +6,7 @@
 ```yaml
 # fingerprint:
 artifacts_sha256_basic: 92d748fd6d8b66c15863f83135be0771e5300224da3775b4a76aa7454aac570e
-artifacts_sha256_strict: 7b5e100b94fefbf42859316b4be115eb6f1c528369bfc85f32c8a2800b5e918b
+artifacts_sha256_strict: 0c70e7f96fd57f3b814b9ac27eeaedf025d02db8b06b2821d8213b35bb344fff
 installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows/
   name: ecoscope-workflows-core
@@ -20,9 +20,9 @@ installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   name: ecoscope-workflows-ext-bahari-hai
   version: {version: ==0.0.16}
-- channel: file:///tmp/ecoscope-workflows-custom/release/artifacts/
+- channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   name: ecoscope-workflows-ext-bh-village-games
-  version: {version: ==10000.dev3+g636dffbf5.d20260417}
+  version: {version: ==0.0.3}
 - channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   name: ecoscope-workflows-ext-ste
   version: {version: ==0.0.18}
