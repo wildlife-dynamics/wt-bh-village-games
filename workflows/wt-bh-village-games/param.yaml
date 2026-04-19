@@ -1,12 +1,101 @@
-workflow_details:
-  name: "Example Workflow"
-  description: "An example workflow for testing purposes."
+# ══════════════════════════════════════════════════════════════════════════════
+# Bahari Hai — Village Games param.yaml
+# ══════════════════════════════════════════════════════════════════════════════
+
+wf_details:
+  name: "wt_bh_village_games"
+
 time_range:
-  since: "2015-01-01T00:00:00Z"
-  until: "2015-02-28T23:59:59Z"
-groupers:
-  groupers: []
-calculator:
-  a: 1
-  b: 1
-  operation: "add"
+  timezone:
+    label: UTC
+    tzCode: UTC
+    name: UTC
+    utc: '+03:00'
+  time_format: '%d %b %Y %H:%M:%S'
+  since: '2024-01-01T00:00:00.000Z'
+  until: '2024-12-31T23:59:00.000Z'
+
+# CSV patrol data
+csv_input:
+  input_method:
+    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/patrol_findings_with_village.csv"
+
+# Icons directory — should contain:
+#   green_thumb.png, red_thumb.png       (feedback tables)
+#   boat.png, happy.png, sad.png         (leaderboards)
+#   turtle_poaching.png, mangrove_logging.png,
+#   illegal_fishing.png, arrests.png,
+#   poached_turtle_sum.png               (icon bars)
+icons_input:
+  input_method:
+    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/icons"
+
+# Marine layers for ecomaps
+marine_layers_input:
+  input_method:
+    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/marine_layers"
+
+# Report template (Word .docx)
+report_template_input:
+  input_method:
+    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/BH_REPORTS/bahari_hai_village_games_report_template.docx"
+
+# Groupers — users can change these in the desktop UI
+# Yearly grouper drives community feedback tables, heatmaps, donuts, and maps
+# yearly_groupers:
+#   groupers:
+#     - index_name: Year
+
+# # Quarterly grouper drives leaderboards and icon bars
+# quarterly_groupers:
+#   groupers:
+#     - index_name: Quarter
+
+# # Icon paths — update these to match your actual icon filenames
+# tbl_poaching:
+#   year: 2024
+  
+# tbl_mangrove:
+#   year: 2024
+  
+# tbl_fishing:
+#   year: 2024
+  
+# tbl_arrests:
+#   year: 2024
+  
+# tbl_turtles:
+#   year: 2024
+  
+# lb_poaching:
+#   year: 2024
+#   quarter: 4
+  
+# lb_mangrove:
+#   year: 2024
+#   quarter: 4
+  
+# lb_fishing:
+#   year: 2024  
+#   quarter: 4
+  
+# lb_arrests:
+#   year: 2024
+#   quarter: 4
+  
+# ibar_v01:
+#   year: 2024
+#   quarter: 4
+  
+# ibar_v02:
+#   year: 2024
+#   quarter: 4
+  
+# ibar_v13:
+#   year: 2024
+#   quarter: 4
+  
+# all_villages_bar:
+#   year: 2024
+#   quarter: 4
+  

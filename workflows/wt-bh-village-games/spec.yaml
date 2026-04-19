@@ -1,39 +1,2423 @@
 id: wt_bh_village_games
+
 requirements:
   - name: ecoscope-workflows-core
+    version: ">=0.19.4"
+    channel: https://repo.prefix.dev/ecoscope-workflows/
+  - name: ecoscope-workflows-ext-ecoscope
     version: "*"
     channel: https://repo.prefix.dev/ecoscope-workflows/
+  - name: ecoscope-workflows-ext-custom
+    version: "0.0.28.*"
+    channel: https://repo.prefix.dev/ecoscope-workflows-custom/
+  - name: ecoscope-workflows-ext-bahari-hai
+    version: "==0.0.16"
+    channel: https://repo.prefix.dev/ecoscope-workflows-custom/
+  - name: ecoscope-workflows-ext-bh-village-games
+    version: "*"
+    channel: file:///tmp/ecoscope-workflows-custom/release/artifacts/
+  - name: ecoscope-workflows-ext-ste
+    version: "0.0.18.*"
+    channel: https://repo.prefix.dev/ecoscope-workflows-custom/
+  - name: pandas
+    version: ">=1.5.0"
+    channel: conda-forge
+  - name: pandera
+    version: "0.26.0"
+    channel: conda-forge
 
+  - name: geopandas
+    version: ">=0.13.0"
+    channel: conda-forge
+
+  - name: docxtpl
+    version: ">=0.16"
+    channel: conda-forge
+
+  - name: matplotlib
+    version: ">=3.7.0"
+    channel: conda-forge
+  - name: plotly
+    version: ">=5.0.0"
+    channel: conda-forge
+  - name: fiona
+    version: ">=1.9.0"
+    channel: conda-forge
+
+rjsf-overrides:
+  $defs:
+    ValueGrouper.properties.index_name.oneOf:
+      - const: Year
+        title: Year
+      - const: Quarter
+        title: Quarter
 
 workflow:
-  - name: Set Workflow Details
-    id: workflow_details
+
+  # ── Workflow meta ─────────────────────────────────────────
+  - name: Workflow Details
+    id: wf_details
     task: set_workflow_details
+
   - name: Time Range
     id: time_range
     task: set_time_range
+
+  # ── Inputs ────────────────────────────────────────────────
+  - name: CSV input
+    id: csv_input
+    task: get_file_path
     partial:
-      time_format: "%d %b %Y %H:%M:%S %Z"
-  - name: Set Groupers
-    id: groupers
+      output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+
+  - name: Load data
+    id: load_data
+    task: load_df
+    partial:
+      file_path: ${{ workflow.csv_input.return }}
+      deserialize_json: false
+
+  - name: Icons directory
+    id: icons_input
+    task: get_file_path
+    partial:
+      output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+
+  - name: Marine layers path
+    id: marine_layers_input
+    task: get_file_path
+    partial:
+      output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+
+  - name: Report template
+    id: report_template_input
+    task: get_file_path
+    partial:
+      output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+
+  # ── Clean data ────────────────────────────────────────────
+  - name: Clean patrol data
+    id: clean_data
+    task: clean_dataframe
+    partial:
+      data: ${{ workflow.load_data.return }}
+      date_columns:
+        - "Patrol Start Date"
+        - "Waypoint Date"
+      date_format: "%d-%b-%y"
+      groupby_period:
+        - "Year"
+        - "Quarter"
+      numeric_columns:
+        - "X"
+        - "Y"
+      drop_duplicates: false
+
+  # ── Groupers & split ──────────────────────────────────────
+  - name: Yearly groupers
+    id: yearly_groupers
     task: set_groupers
-  - name: Calculate Task
-    id: calculator
-    task: apply_arithmetic_operation
-  - name: Create Single Value Widgets
-    id: sv_widgets
-    task: create_single_value_widget_single_view
     partial:
-      title: "Sum"
-      decimal_places: 0
-      data: ${{ workflow.calculator.return }}
-  - name: Create An Example Dashboard
-    id: template_dashboard
+      groupers:
+        - index_name: Year
+
+  - name: Quarterly groupers
+    id: quarterly_groupers
+    task: set_groupers
+    partial:
+      groupers:
+        - index_name: Quarter
+
+  - name: Split by year
+    id: split_yearly
+    task: split_groups
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      groupers: ${{ workflow.yearly_groupers.return }}
+
+  - name: Split by quarter
+    id: split_quarterly
+    task: split_groups
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      groupers: ${{ workflow.quarterly_groupers.return }}
+
+  # ════════════════════════════════════════════════════════════
+  # SECTION 1 — COMMUNITY FEEDBACK TABLES (yearly)
+  # 5 tables, one per activity
+  # ════════════════════════════════════════════════════════════
+  #draw table for poaching 
+  - name: Feedback table - poaching
+    id: tbl_poaching
+    task: draw_community_feedback_table
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "poaching"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # persist poaching table as html
+  - name: Persist feedback - poaching
+    id: persist_tbl_poaching
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: feedback_poaching
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.tbl_poaching.return }}
+
+  #convert html to PNG for the report
+  - name: poaching table png
+    id: png_tbl_poaching
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues: 
+      argnames: html_path
+      argvalues: ${{ workflow.persist_tbl_poaching.return }}
+
+  # define poaching table widget
+  - name: Widget feedback - poaching
+    id: widget_tbl_poaching
+    task: create_plot_widget_single_view
+    partial:
+      title: "Feedback: Poaching"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_tbl_poaching.return }}
+
+  #draw table for mangrove logging
+  - name: Feedback table - mangrove
+    id: tbl_mangrove
+    task: draw_community_feedback_table
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "mangrove logging"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # Persist mangove logging table
+  - name: Persist feedback - mangrove
+    id: persist_tbl_mangrove
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: feedback_mangrove
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.tbl_mangrove.return }}
+
+  # Convert mangrove logging html to png
+  - name: mangrove table png
+    id: png_tbl_mangrove
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_tbl_mangrove.return }}
+
+# Create mangrove logging table widget
+  - name: Widget feedback - mangrove
+    id: widget_tbl_mangrove
+    task: create_plot_widget_single_view
+    partial:
+      title: "Feedback: Mangrove Logging"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_tbl_mangrove.return }}
+
+# Draw illegal fishing table 
+  - name: Feedback table - fishing
+    id: tbl_fishing
+    task: draw_community_feedback_table
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "illegal fishing"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # Persist illegal fishing table
+  - name: Persist feedback - fishing
+    id: persist_tbl_fishing
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: feedback_fishing
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.tbl_fishing.return }}
+
+  #Convert illegal fishing html to png
+  - name: illegal fishing tbl png
+    id: png_tbl_fishing
+    task: html_to_png
+    partial: 
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_tbl_fishing.return }}
+
+  # Create the table widget for illegal fishing
+  - name: Widget feedback - fishing
+    id: widget_tbl_fishing
+    task: create_plot_widget_single_view
+    partial:
+      title: "Feedback: Illegal Fishing"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_tbl_fishing.return }}
+
+  # Draw table for arrests
+  - name: Feedback table - arrests
+    id: tbl_arrests
+    task: draw_community_feedback_table
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "arrests"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # Persist arrests table as html
+  - name: Persist feedback - arrests
+    id: persist_tbl_arrests
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: feedback_arrests
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.tbl_arrests.return }}
+
+  # Convert html to png
+  - name: arrests table png
+    id: png_tbl_arrests
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_tbl_arrests.return }}
+    
+  # Create table widget for arrests
+  - name: Widget feedback - arrests
+    id: widget_tbl_arrests
+    task: create_plot_widget_single_view
+    partial:
+      title: "Feedback: Arrests"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_tbl_arrests.return }}
+
+  # Draw turtles sum table
+  - name: Feedback table - turtles
+    id: tbl_turtles
+    task: draw_community_feedback_table
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "poached turtle sum"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # Persist table as html
+  - name: Persist feedback - turtles
+    id: persist_tbl_turtles
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: feedback_turtles
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.tbl_turtles.return }}
+
+  # Convert poaching turtles sum html to png
+  - name: poached turtles table png
+    id: png_tbl_turtles
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_tbl_turtles.return }}
+
+  # Create the poached turtles sum widget
+  - name: Widget feedback - turtles
+    id: widget_tbl_turtles
+    task: create_plot_widget_single_view
+    partial:
+      title: "Feedback: Poached Turtles"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_tbl_turtles.return }}
+
+  # ════════════════════════════════════════════════════════════
+  # SECTION 2 — MONTHLY HEATMAP (yearly)
+  # ════════════════════════════════════════════════════════════
+  # Draw monthly heatmap table
+  - name: Monthly heatmap
+    id: monthly_heatmap
+    task: draw_monthly_heatmap
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # Persist the heatmap as html
+  - name: Persist monthly heatmap
+    id: persist_heatmap
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: monthly_heatmap
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.monthly_heatmap.return }}
+
+  # Convert heatmap html to PNG
+  - name: monthly heatmap png
+    id: png_monthly_heatmap
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_heatmap.return }}
+
+# Create the heatmap widget
+  - name: Widget monthly heatmap
+    id: widget_heatmap
+    task: create_plot_widget_single_view
+    partial:
+      title: Monthly Illegal Events Heatmap
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_heatmap.return }}
+
+  # ════════════════════════════════════════════════════════════
+  # SECTION 3 — PER-VILLAGE DONUT CHARTS (yearly)
+  # One task per village — parameterised via param.yaml
+  # ════════════════════════════════════════════════════════════
+  # Create donut chart
+  - name: Donut - Darakasi to Watamu
+    id: donut_v01
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Darakasi to Watamu"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # Persist donut chart as html
+  - name: Persist donut v01
+    id: persist_donut_v01
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_darakasi_watamu
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v01.return }}
+
+  # Convert html to png
+  - name: Donut v01 png
+    id: png_donut_v01
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v01.return }}
+
+# Create a widget
+  - name: Widget donut v01
+    id: widget_donut_v01
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Darakasi to Watamu"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v01.return }}
+
+# Create the donut
+  - name: Donut - Dongokundu to Sita
+    id: donut_v02
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Dongokundu to Sita"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Persist donut as html
+  - name: Persist donut v02
+    id: persist_donut_v02
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_dongokundu_sita
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v02.return }}
+
+# Convert html to png
+  - name: Donut v02 png
+    id: png_donut_v02
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v02.return }}
+    
+# Create a widget
+  - name: Widget donut v02
+    id: widget_donut_v02
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Dongokundu to Sita"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v02.return }}
+
+# Create the donut chat
+  - name: Donut - Jacaranda to Kanani
+    id: donut_v03
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Jacaranda to Kanani"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+#Persist donut as html
+  - name: Persist donut v03
+    id: persist_donut_v03
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_jacaranda_kanani
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v03.return }}
+
+# Convert html to png
+  - name: Donut v03 png
+    id: png_donut_v03
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v03.return }}
+  
+# Create donut widget
+  - name: Widget donut v03
+    id: widget_donut_v03
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Jacaranda to Kanani"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v03.return }}
+
+# Draw the dinut chart
+  - name: Donut - Kanani to Darakasi
+    id: donut_v04
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Kanani to Darakasi"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Perist donut as html
+  - name: Persist donut v04
+    id: persist_donut_v04
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_kanani_darakasi
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v04.return }}
+
+# Convert html to png
+  - name: Donut v04 png
+    id: png_donut_v04
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v04.return }}
+
+# Create the widget
+  - name: Widget donut v04
+    id: widget_donut_v04
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Kanani to Darakasi"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v04.return }}
+
+# Create the donut chart
+  - name: Donut - Kivunjeni to Wesa
+    id: donut_v05
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Kivunjeni to Wesa"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Persist as html
+  - name: Persist donut v05
+    id: persist_donut_v05
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_kivunjeni_wesa
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v05.return }}
+
+  # Convert html to png
+  - name: Donut v05 png
+    id: png_donut_v05
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path 
+      argvalues: ${{ workflow.persist_donut_v05.return }}
+
+   # Creat the widget     
+  - name: Widget donut v05
+    id: widget_donut_v05
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Kivunjeni to Wesa"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v05.return }}
+
+  # Draw the chart
+  - name: Donut - Magangani to Mida
+    id: donut_v06
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Magangani to Mida"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Persist html
+  - name: Persist donut v06
+    id: persist_donut_v06
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_magangani_mida
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v06.return }}
+
+  # Convert html to png
+  - name: Donut v06 png
+    id: png_donut_v06
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v06.return }}
+
+  # Creat the widget
+  - name: Widget donut v06
+    id: widget_donut_v06
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Magangani to Mida"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v06.return }}
+
+# Create the donut
+  - name: Donut - Marafiki to Uyombo
+    id: donut_v07
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Marafiki to Uyombo"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Perist as html
+  - name: Persist donut v07
+    id: persist_donut_v07
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_marafiki_uyombo
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v07.return }}
+
+# Convert html to png
+  - name: Donut v07 png
+    id: png_donut_v07
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v07.return }}
+      
+ # Create the widget
+  - name: Widget donut v07
+    id: widget_donut_v07
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Marafiki to Uyombo"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v07.return }}
+
+# Create the donut chart
+  - name: Donut - Mawe Ya Kati to Jacaranda
+    id: donut_v08
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Mawe Ya Kati to Jacaranda"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Persist as html
+  - name: Persist donut v08
+    id: persist_donut_v08
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_mawe_jacaranda
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v08.return }}
+
+  # Convert html to png
+  - name: Donut v08 png
+    id: png_donut_v08
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v08.return }}
+
+# Create widget
+  - name: Widget donut v08
+    id: widget_donut_v08
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Mawe Ya Kati to Jacaranda"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v08.return }}
+
+# Create the donut chart
+  - name: Donut - Mid Mayungu to Mawe Ya Kati
+    id: donut_v09
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Mid Mayungu to Mawe Ya Kati"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Perists html
+  - name: Persist donut v09
+    id: persist_donut_v09
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_mid_mayungu_mawe
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v09.return }}
+
+  # Convert html to png
+  - name: Donut v09 png
+    id: png_donut_v09
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v09.return }}
+
+  # Create widget     
+  - name: Widget donut v09
+    id: widget_donut_v09
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Mid Mayungu to Mawe Ya Kati"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v09.return }}
+
+  # Create donut 
+  - name: Donut - Mida to Marafiki
+    id: donut_v10
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Mida to Marafiki"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Persists as html
+  - name: Persist donut v10
+    id: persist_donut_v10
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_mida_marafiki
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v10.return }}
+
+  # Convert html to png
+  - name: Donut v10 png
+    id: png_donut_v10
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v10.return }}
+
+  # Create widget
+  - name: Widget donut v10
+    id: widget_donut_v10
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Mida to Marafiki"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v10.return }}
+
+# Create donut
+  - name: Donut - Sita to Magangani
+    id: donut_v11
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Sita to Magangani"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Persits as html
+  - name: Persist donut v11
+    id: persist_donut_v11
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_sita_magangani
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v11.return }}
+
+  # Convert html to png
+  - name: Donut v11 png
+    id: png_donut_v11
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v11.return }}
+
+   # Create widget     
+  - name: Widget donut v11
+    id: widget_donut_v11
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Sita to Magangani"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v11.return }}
+
+# Create the chart
+  - name: Donut - Uyombo to Kivunjeni
+    id: donut_v12
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Uyombo to Kivunjeni"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+# Persist as html
+  - name: Persist donut v12
+    id: persist_donut_v12
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_uyombo_kivunjeni
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v12.return }}
+
+  # Convert html to png
+  - name: Donut v12 png
+    id: png_donut_v12
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v12.return }}  
+
+  # Create a widget      
+  - name: Widget donut v12
+    id: widget_donut_v12
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Uyombo to Kivunjeni"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v12.return }}
+
+ # Create the chart
+  - name: Donut - Watamu to Dongokundu
+    id: donut_v13
+    task: draw_village_donut_chart
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Watamu to Dongokundu"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_yearly.return }}
+
+  # Persist as html
+  - name: Persist donut v13
+    id: persist_donut_v13
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: donut_watamu_dongokundu
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.donut_v13.return }}
+
+  # Convert html to png
+  - name: Donut v13 png
+    id: png_donut_v13
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_donut_v13.return }}
+
+  # Create a widget
+  - name: Widget donut v13
+    id: widget_donut_v13
+    task: create_plot_widget_single_view
+    partial:
+      title: "Donut: Watamu to Dongokundu"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_donut_v13.return }}
+
+  # ════════════════════════════════════════════════════════════
+  # SECTION 4 — LEADERBOARDS (quarterly)
+  # ════════════════════════════════════════════════════════════
+
+  - name: Leaderboard - poaching
+    id: lb_poaching
+    task: draw_activity_leaderboard
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "poaching"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+  # Persist poaching as html
+  - name: Persist lb poaching
+    id: persist_lb_poaching
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: lb_poaching
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.lb_poaching.return }}
+
+  # Convert poaching html to png
+  - name: Poaching lb png
+    id: png_lb_poaching
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_lb_poaching.return }}
+
+# Create a widget
+  - name: Widget lb poaching
+    id: widget_lb_poaching
+    task: create_plot_widget_single_view
+    partial:
+      title: "Leaderboard: Poaching"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_lb_poaching.return }}
+
+# Create mangrove leaderboard
+  - name: Leaderboard - mangrove
+    id: lb_mangrove
+    task: draw_activity_leaderboard
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "mangrove logging"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+      no_mangrove_sectors:
+        - "Sector 2"
+        - "Sector 3"
+        - "Sector 4"
+        - "Sector 5"
+        - "Sector 13"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+  # Persist html
+  - name: Persist lb mangrove
+    id: persist_lb_mangrove
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: lb_mangrove
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.lb_mangrove.return }}
+
+  # Convert html to png
+  - name: Mangrove lb png
+    id: png_lb_mangrove
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_lb_mangrove.return }}
+
+# Create a widget
+  - name: Widget lb mangrove
+    id: widget_lb_mangrove
+    task: create_plot_widget_single_view
+    partial:
+      title: "Leaderboard: Mangrove Logging"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_lb_mangrove.return }}
+
+  # Create leaderboard
+  - name: Leaderboard - fishing
+    id: lb_fishing
+    task: draw_activity_leaderboard
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "illegal fishing"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+  # Persits html
+  - name: Persist lb fishing
+    id: persist_lb_fishing
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: lb_fishing
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.lb_fishing.return }}
+
+# Convert html to png
+  - name: Fishing lb png
+    id: png_lb_fishing
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_lb_fishing.return }}
+
+# Create widget
+  - name: Widget lb fishing
+    id: widget_lb_fishing
+    task: create_plot_widget_single_view
+    partial:
+      title: "Leaderboard: Illegal Fishing"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_lb_fishing.return }}
+
+  # Create leaderboard
+  - name: Leaderboard - arrests
+    id: lb_arrests
+    task: draw_activity_leaderboard
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      activity_key: "arrests"
+      icons_dir: ${{ workflow.icons_input.return }}
+      station_column: "Station"
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist lb arrests
+    id: persist_lb_arrests
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: lb_arrests
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.lb_arrests.return }}
+
+# Convert html to png
+  - name: Arrests lb png
+    id: png_lb_arrests
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_lb_arrests.return }}
+
+  # Create widget
+  - name: Widget lb arrests
+    id: widget_lb_arrests
+    task: create_plot_widget_single_view
+    partial:
+      title: "Leaderboard: Arrests"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_lb_arrests.return }}
+
+  # ════════════════════════════════════════════════════════════
+  # SECTION 5 — PER-VILLAGE ICON BARS (quarterly)
+  # ════════════════════════════════════════════════════════════
+
+  - name: Icon bar - Darakasi to Watamu
+    id: ibar_v01
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Darakasi to Watamu"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Perists html
+  - name: Persist ibar v01
+    id: persist_ibar_v01
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_darakasi_watamu
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v01.return }}
+
+  # COnvert html to PNG
+  - name: Convert ibar v01 to PNG
+    id: png_ibar_v01
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v01.return }}
+
+# Create a widget
+  - name: Widget ibar v01
+    id: widget_ibar_v01
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Darakasi to Watamu"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v01.return }}
+
+  # Create the icon bar
+  - name: Icon bar - Dongokundu to Sita
+    id: ibar_v02
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Dongokundu to Sita"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v02
+    id: persist_ibar_v02
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_dongokundu_sita
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v02.return }}
+
+  # COnvert html to PNG
+  - name: Convert ibar v02 to PNG
+    id: png_ibar_v02
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v02.return }}
+
+# Create widget
+  - name: Widget ibar v02
+    id: widget_ibar_v02
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Dongokundu to Sita"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v02.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Magangani to Mida
+    id: ibar_v03
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Magangani to Mida"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v03
+    id: persist_ibar_v03
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_magangani_mida
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v03.return }}
+
+# Convert html to PNG
+  - name: Convert ibar v03 to PNG
+    id: png_ibar_v03
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues: 
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v03.return }}
+
+# Create a widget
+  - name: Widget ibar v03
+    id: widget_ibar_v03
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Magangani to Mida"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v03.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Uyombo to Kivunjeni
+    id: ibar_v04
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Uyombo to Kivunjeni"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v04
+    id: persist_ibar_v04
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_uyombo_kivunjeni
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v04.return }}
+
+# Convert html to PNG
+  - name: Convert ibar v04 to PNG
+    id: png_ibar_v04
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v04.return }}
+
+# Create a widget
+  - name: Widget ibar v04
+    id: widget_ibar_v04
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Uyombo to Kivunjeni"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v04.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Watamu to Dongokundu
+    id: ibar_v05
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Watamu to Dongokundu"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v05
+    id: persist_ibar_v05
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_watamu_dongokundu
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v05.return }}
+
+# Convert html to PNG
+  - name: Convert ibar v05 to PNG
+    id: png_ibar_v05
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v05.return }}
+
+# Create a widget
+  - name: Widget ibar v05
+    id: widget_ibar_v05
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Watamu to Dongokundu"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v05.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Mida to Marafiki
+    id: ibar_v06
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Mida to Marafiki"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Perist html
+  - name: Persist ibar v06
+    id: persist_ibar_v06
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_mida_marafiki
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v06.return }}
+
+# Convert html to png
+  - name: Convert ibar v06 to PNG
+    id: png_ibar_v06
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v06.return }}
+
+# Create a widget
+  - name: Widget ibar v06
+    id: widget_ibar_v06
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Mida to Marafiki"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v06.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Mawe Ya Kati to Jacaranda
+    id: ibar_v07
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Mawe Ya Kati to Jacaranda"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v07
+    id: persist_ibar_v07
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_mawe_jacaranda
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v07.return }}  
+
+# Convert html to png
+  - name: Convert ibar v07 to PNG
+    id: png_ibar_v07
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v07.return }}
+
+# Create a widget
+  - name: Widget ibar v07
+    id: widget_ibar_v07
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Mawe Ya Kati to Jacaranda"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v07.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Mid Mayungu to Mawe Ya Kati
+    id: ibar_v08
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Mid Mayungu to Mawe Ya Kati"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v08
+    id: persist_ibar_v08
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_mid_mayungu_mawe
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v08.return }}
+
+# Convert html to PNG
+  - name: Convert ibar v08 to PNG
+    id: png_ibar_v08
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v08.return }}
+
+# Create a widget
+  - name: Widget ibar v08
+    id: widget_ibar_v08
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Mid Mayungu to Mawe Ya Kati"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v08.return }}
+
+# Darw the icon bar
+  - name: Icon bar - Marafiki to Uyombo
+    id: ibar_v09
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Marafiki to Uyombo"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v09
+    id: persist_ibar_v09
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_marafiki_uyombo
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v09.return }}
+
+# Convert html to PNG
+  - name: Convert ibar v09 to PNG
+    id: png_ibar_v09
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v09.return }}
+
+# Create a widget
+  - name: Widget ibar v09
+    id: widget_ibar_v09
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Marafiki to Uyombo"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v09.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Kivunjeni to Wesa
+    id: ibar_v10
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Kivunjeni to Wesa"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v10
+    id: persist_ibar_v10
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_kivunjeni_wesa
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v10.return }}
+
+# Convert html to PNG
+  - name: Convert ibar v10 to PNG
+    id: png_ibar_v10
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v10.return }}
+
+# Create a widget
+  - name: Widget ibar v10
+    id: widget_ibar_v10
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Kivunjeni to Wesa"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v10.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Kanani to Darakasi
+    id: ibar_v11
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Kanani to Darakasi"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v11
+    id: persist_ibar_v11
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_kanani_darakasi
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v11.return }}
+
+# Convert html to png
+  - name: Convert ibar v11 to PNG
+    id: png_ibar_v11
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v11.return }}
+
+# Create a widget
+  - name: Widget ibar v11
+    id: widget_ibar_v11
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Kanani to Darakasi"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v11.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Jacaranda to Kanani
+    id: ibar_v12
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Jacaranda to Kanani"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v12
+    id: persist_ibar_v12
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_jacaranda_kanani
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v12.return }}
+
+# Convert html to PNG
+  - name: Convert ibar v12 to PNG
+    id: png_ibar_v12
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v12.return }}
+
+# Create a widget
+  - name: Widget ibar v12
+    id: widget_ibar_v12
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Jacaranda to Kanani"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v12.return }}
+
+# Draw the icon bar
+  - name: Icon bar - Watamu to Dongokundu
+    id: ibar_v13
+    task: draw_village_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      village: "Watamu to Dongokundu"
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+# Persist html
+  - name: Persist ibar v13
+    id: persist_ibar_v13
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: ibar_watamu_dongokundu
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.ibar_v13.return }}
+
+  # COnvert html to PNG
+  - name: Convert ibar v13 to PNG
+    id: png_ibar_v13
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ibar_v13.return }}
+
+# Create widget
+  - name: Widget ibar v13
+    id: widget_ibar_v13
+    task: create_plot_widget_single_view
+    partial:
+      title: "Icon Bar: Watamu to Dongokundu"
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ibar_v13.return }}
+
+  # ════════════════════════════════════════════════════════════
+  # SECTION 6 — ALL-VILLAGES SUMMARY ICON BAR (quarterly)
+  # ════════════════════════════════════════════════════════════
+  # Draw the bar chart
+  - name: All-villages icon bar
+    id: all_villages_bar
+    task: draw_all_villages_icon_bar
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      icons_dir: ${{ workflow.icons_input.return }}
+      village_column: "Village"
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_quarterly.return }}
+
+  # Persist html
+  - name: Persist all-villages bar
+    id: persist_all_villages_bar
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: all_villages_icon_bar
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.all_villages_bar.return }}
+
+  # Convert html to PNG
+  - name: Convert all-villages bar to PNG
+    id: png_all_villages_bar
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_all_villages_bar.return }}
+
+  # Create widget
+  - name: Widget all-villages bar
+    id: widget_all_villages_bar
+    task: create_plot_widget_single_view
+    partial:
+      title: All Villages Illegal Events
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_all_villages_bar.return }}
+
+  # ════════════════════════════════════════════════════════════
+  # SECTION 7 — ECOMAPS (from patrol-summary, reused here)
+  # ════════════════════════════════════════════════════════════
+
+  - name: Split for maps
+    id: split_maps
+    task: split_groups
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      groupers: ${{ workflow.yearly_groupers.return }}
+
+# Draw illegal events masp
+  - name: Illegal events map
+    id: illegal_events_map
+    task: draw_illegal_events_map
+    partial:
+      groupers: ${{ workflow.yearly_groupers.return }}
+      marine_layers_path: ${{ workflow.marine_layers_input.return }}
+      widget_id: Illegal Events Map
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_maps.return }}
+
+  # Persist html
+  - name: Persist illegal events map
+    id: persist_ie_map
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: illegal_events_map
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.illegal_events_map.return }}
+
+  # Conert html to PNG
+  - name: Convert illegal events map to PNG
+    id: png_ie_map
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_ie_map.return }}
+
+  # Create widget
+  - name: Widget illegal events map
+    id: widget_ie_map
+    task: create_map_widget_single_view
+    partial:
+      title: Illegal Events Map
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_ie_map.return }}
+
+# draw poaching events map
+  - name: Poaching map
+    id: poaching_map
+    task: draw_poaching_map
+    partial:
+      groupers: ${{ workflow.yearly_groupers.return }}
+      marine_layers_path: ${{ workflow.marine_layers_input.return }}
+      widget_id: Poaching Hotspot Map
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_maps.return }}
+
+  # Persist html
+  - name: Persist poaching map
+    id: persist_poaching_map
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: poaching_map
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.poaching_map.return }}
+
+  # Convert html to PNG
+  - name: Convert poaching map to PNG
+    id: png_poaching_map
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_poaching_map.return }}
+
+# Create a widget
+  - name: Widget poaching map
+    id: widget_poaching_map
+    task: create_map_widget_single_view
+    partial:
+      title: Poaching Hotspot Map
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_poaching_map.return }}
+
+# Mangrove logging map
+  - name: Mangrove logging map
+    id: mangrove_map
+    task: draw_mangrove_logging_map
+    partial:
+      groupers: ${{ workflow.yearly_groupers.return }}
+      marine_layers_path: ${{ workflow.marine_layers_input.return }}
+      widget_id: Mangrove Logging Map
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_maps.return }}
+
+# Persist html
+  - name: Persist mangrove map
+    id: persist_mangrove_map
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: mangrove_map
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.mangrove_map.return }}
+
+# Convert html to PNG
+  - name: Convert mangrove map to PNG
+    id: png_mangrove_map
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_mangrove_map.return }}
+
+# Create a widget
+  - name: Widget mangrove map
+    id: widget_mangrove_map
+    task: create_map_widget_single_view
+    partial:
+      title: Mangrove Logging Map
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_mangrove_map.return }}
+
+# Draw illegal fishing map
+  - name: Illegal fishing map
+    id: illegal_fishing_map
+    task: draw_illegal_fishing_map
+    partial:
+      groupers: ${{ workflow.yearly_groupers.return }}
+      marine_layers_path: ${{ workflow.marine_layers_input.return }}
+      widget_id: Illegal Fishing Map
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_maps.return }}
+
+  # Persist html
+  - name: Persist illegal fishing map
+    id: persist_illegal_fishing_map
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: illegal_fishing_map
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.illegal_fishing_map.return }}
+
+  # Convert html to PNG
+  - name: Convert illegal fishing map to PNG
+    id: png_illegal_fishing_map
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues:
+      argnames: html_path
+      argvalues: ${{ workflow.persist_illegal_fishing_map.return }}
+
+  # Create a widget
+  - name: Widget illegal fishing map
+    id: widget_illegal_fishing_map
+    task: create_map_widget_single_view
+    partial:
+      title: Illegal Fishing Map
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_illegal_fishing_map.return }}
+
+  # Draw arrests map
+  - name: Arrests map
+    id: arrests_map
+    task: draw_arrests_map
+    partial:
+      groupers: ${{ workflow.yearly_groupers.return }}
+      marine_layers_path: ${{ workflow.marine_layers_input.return }}
+      widget_id: Arrests Map
+    mapvalues:
+      argnames: df
+      argvalues: ${{ workflow.split_maps.return }}
+
+  # Persist html
+  - name: Persist arrests map
+    id: persist_arrests_map
+    task: persist_text
+    partial:
+      root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      filename_suffix: arrests_map
+    mapvalues:
+      argnames: text
+      argvalues: ${{ workflow.arrests_map.return }}
+
+  # Convert html to PNG
+  - name: Convert arrests map to PNG
+    id: png_arrests_map
+    task: html_to_png
+    partial:
+      output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      config: 
+        full_page: false
+        device_scale_factor: 1.0
+        wait_for_timeout: 1000
+        timeout: 0
+        max_concurrent_pages: 1
+    mapvalues: 
+      argnames: html_path
+      argvalues: ${{ workflow.persist_arrests_map.return }}
+
+  # Create a widget
+  - name: Widget arrests map
+    id: widget_arrests_map
+    task: create_map_widget_single_view
+    partial:
+      title: Arrests Map
+    mapvalues:
+      argnames: data
+      argvalues: ${{ workflow.persist_arrests_map.return }}
+
+  
+  
+  # ════════════════════════════════════════════════════════════
+  # SECTION 8 — REPORT
+  # ════════════════════════════════════════════════════════════
+
+  - name: Get report year
+    id: report_year
+    task: get_report_year
+    partial:
+      df: ${{ workflow.clean_data.return }}
+      groupers: ${{ workflow.yearly_groupers.return }}
+
+  - name: Get report generation date
+    id: report_generation_date
+    task: get_generation_date
+    partial: {}
+
+  - name: Render village games report
+    id: render_village_games_report
+    task: render_vg_report
+    partial:
+      template_path: ${{ workflow.report_template_input.return }}
+      output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      report_year: ${{ workflow.report_year.return }}
+      generation_date: ${{ workflow.report_generation_date.return }}
+
+      # ── Section 1: Community Feedback Tables ─────────────
+      feedback_poaching_png: ${{ workflow.png_tbl_poaching.return }}
+      feedback_mangrove_png: ${{ workflow.png_tbl_mangrove.return }}
+      feedback_fishing_png: ${{ workflow.png_tbl_fishing.return }}
+      feedback_arrests_png: ${{ workflow.png_tbl_arrests.return }}
+      feedback_turtles_png: ${{ workflow.png_tbl_turtles.return }}
+
+      # ── Section 2: Monthly Heatmap ────────────────────────
+      monthly_heatmap_png: ${{ workflow.png_monthly_heatmap.return }}
+
+      # ── Section 3: Per-Village Donut Charts ──────────────
+      donut_darakasi_watamu_png: ${{ workflow.png_donut_v01.return }}
+      donut_dongokundu_sita_png: ${{ workflow.png_donut_v02.return }}
+      donut_jacaranda_kanani_png: ${{ workflow.png_donut_v03.return }}
+      donut_kanani_darakasi_png: ${{ workflow.png_donut_v04.return }}
+      donut_kivunjeni_wesa_png: ${{ workflow.png_donut_v05.return }}
+      donut_magangani_mida_png: ${{ workflow.png_donut_v06.return }}
+      donut_marafiki_uyombo_png: ${{ workflow.png_donut_v07.return }}
+      donut_mawe_jacaranda_png: ${{ workflow.png_donut_v08.return }}
+      donut_mid_mayungu_mawe_png: ${{ workflow.png_donut_v09.return }}
+      donut_mida_marafiki_png: ${{ workflow.png_donut_v10.return }}
+      donut_sita_magangani_png: ${{ workflow.png_donut_v11.return }}
+      donut_uyombo_kivunjeni_png: ${{ workflow.png_donut_v12.return }}
+      donut_watamu_dongokundu_png: ${{ workflow.png_donut_v13.return }}
+
+      # ── Section 4: Quarterly Leaderboards ────────────────
+      lb_poaching_png: ${{ workflow.png_lb_poaching.return }}
+      lb_mangrove_png: ${{ workflow.png_lb_mangrove.return }}
+      lb_fishing_png: ${{ workflow.png_lb_fishing.return }}
+      lb_arrests_png: ${{ workflow.png_lb_arrests.return }}
+
+      # ── Section 5: Per-Village Icon Bars ─────────────────
+      ibar_darakasi_watamu_png: ${{ workflow.png_ibar_v01.return }}
+      ibar_dongokundu_sita_png: ${{ workflow.png_ibar_v02.return }}
+      ibar_magangani_mida_png: ${{ workflow.png_ibar_v03.return }}
+      ibar_uyombo_kivunjeni_png: ${{ workflow.png_ibar_v04.return }}
+      ibar_watamu_dongokundu_png: ${{ workflow.png_ibar_v05.return }}
+      ibar_mida_marafiki_png: ${{ workflow.png_ibar_v06.return }}
+      ibar_mawe_jacaranda_png: ${{ workflow.png_ibar_v07.return }}
+      ibar_mid_mayungu_mawe_png: ${{ workflow.png_ibar_v08.return }}
+      ibar_marafiki_uyombo_png: ${{ workflow.png_ibar_v09.return }}
+      ibar_kivunjeni_wesa_png: ${{ workflow.png_ibar_v10.return }}
+      ibar_kanani_darakasi_png: ${{ workflow.png_ibar_v11.return }}
+      ibar_jacaranda_kanani_png: ${{ workflow.png_ibar_v12.return }}
+
+      # ── Section 6: All-Villages Summary ──────────────────
+      all_villages_icon_bar_png: ${{ workflow.png_all_villages_bar.return }}
+
+      # ── Section 7: Maps ───────────────────────────────────
+      illegal_events_map_png: ${{ workflow.png_ie_map.return }}
+      poaching_map_png: ${{ workflow.png_poaching_map.return }}
+      mangrove_map_png: ${{ workflow.png_mangrove_map.return }}
+      illegal_fishing_map_png: ${{ workflow.png_illegal_fishing_map.return }}
+      arrests_map_png: ${{ workflow.png_arrests_map.return }}
+  
+  # ════════════════════════════════════════════════════════════
+  # SECTION 9 — DASHBOARD
+  # ════════════════════════════════════════════════════════════
+
+  - name: Merge yearly grouped widgets
+    id: grouped_yearly
+    task: groupbykey
+    partial:
+      iterables:
+        - ${{ workflow.widget_tbl_poaching.return }}
+        - ${{ workflow.widget_tbl_mangrove.return }}
+        - ${{ workflow.widget_tbl_fishing.return }}
+        - ${{ workflow.widget_tbl_arrests.return }}
+        - ${{ workflow.widget_tbl_turtles.return }}
+        - ${{ workflow.widget_heatmap.return }}
+        - ${{ workflow.widget_donut_v01.return }}
+        - ${{ workflow.widget_donut_v02.return }}
+        - ${{ workflow.widget_donut_v03.return }}
+        - ${{ workflow.widget_donut_v04.return }}
+        - ${{ workflow.widget_donut_v05.return }}
+        - ${{ workflow.widget_donut_v06.return }}
+        - ${{ workflow.widget_donut_v07.return }}
+        - ${{ workflow.widget_donut_v08.return }}
+        - ${{ workflow.widget_donut_v09.return }}
+        - ${{ workflow.widget_donut_v10.return }}
+        - ${{ workflow.widget_donut_v11.return }}
+        - ${{ workflow.widget_donut_v12.return }}
+        - ${{ workflow.widget_donut_v13.return }}
+        - ${{ workflow.widget_ie_map.return }}
+        - ${{ workflow.widget_poaching_map.return }}
+        - ${{ workflow.widget_mangrove_map.return }}
+        - ${{ workflow.widget_illegal_fishing_map.return }}
+        - ${{ workflow.widget_arrests_map.return }}
+
+  - name: Merge quarterly grouped widgets
+    id: grouped_quarterly
+    task: groupbykey
+    partial:
+      iterables:
+        - ${{ workflow.widget_lb_poaching.return }}
+        - ${{ workflow.widget_lb_mangrove.return }}
+        - ${{ workflow.widget_lb_fishing.return }}
+        - ${{ workflow.widget_lb_arrests.return }}
+        - ${{ workflow.widget_ibar_v01.return }}
+        - ${{ workflow.widget_ibar_v02.return }}
+        - ${{ workflow.widget_ibar_v03.return }}
+        - ${{ workflow.widget_ibar_v04.return }}
+        - ${{ workflow.widget_ibar_v05.return }}
+        - ${{ workflow.widget_ibar_v06.return }}
+        - ${{ workflow.widget_ibar_v07.return }}
+        - ${{ workflow.widget_ibar_v08.return }}
+        - ${{ workflow.widget_ibar_v09.return }}
+        - ${{ workflow.widget_ibar_v10.return }}  
+        - ${{ workflow.widget_ibar_v11.return }}
+        - ${{ workflow.widget_ibar_v12.return }}
+        - ${{ workflow.widget_ibar_v13.return }}
+        - ${{ workflow.widget_all_villages_bar.return }}
+
+  - name: Assemble dashboard widgets
+    id: dashboard_widgets
+    task: assemble_dashboard_widgets
+    partial:
+      single_view_widgets: []
+      keyed_widgets: ${{ workflow.grouped_yearly.return }}
+
+  - name: Village Games Dashboard
+    id: vg_dashboard
     task: gather_dashboard
     partial:
-      details: ${{ workflow.workflow_details.return}}
-      widgets:
-        - ${{ workflow.sv_widgets.return }}
-      time_range: ${{ workflow.time_range.return}}
-      groupers: ${{ workflow.groupers.return }}
-
+      details: ${{ workflow.wf_details.return }}
+      groupers: ${{ workflow.yearly_groupers.return }}
+      widgets: ${{ workflow.dashboard_widgets.return }}
