@@ -23,7 +23,7 @@ hatch-vcs = ">=0.5.0,<0.6"
 [feature.compile.dependencies]
 # Include this if you add new tasks and the package has been built
 #ecoscope-workflows-ext-bahari-hai = "*"
-ecoscope-workflows-ext-bh-village-games = { version = "*", channel = "file:///tmp/ecoscope-workflows-custom/release/artifacts/" }
+ecoscope-workflows-ext-bh-village-games = { version = "0.0.3", channel = "https://repo.prefix.dev/ecoscope-workflows-custom/" }
 geopandas = "*"
 fiona = "*"                        
 shapely = "*"

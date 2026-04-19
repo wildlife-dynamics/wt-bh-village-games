@@ -3,7 +3,6 @@
 [workspace]
 name = "ecoscope-workflows-wt-bh-village-games-workflow"
 channels = [
-    "file:///tmp/ecoscope-workflows-custom/release/artifacts/",
     "https://repo.prefix.dev/ecoscope-workflows-custom/",
     "https://repo.prefix.dev/ecoscope-workflows/",
     "conda-forge",
@@ -37,8 +36,8 @@ version = "==0.0.16"
 channel = "https://repo.prefix.dev/ecoscope-workflows-custom/"
 
 [dependencies.ecoscope-workflows-ext-bh-village-games]
-version = "*"
-channel = "file:///tmp/ecoscope-workflows-custom/release/artifacts/"
+version = "==0.0.3"
+channel = "https://repo.prefix.dev/ecoscope-workflows-custom/"
 
 [dependencies.ecoscope-workflows-ext-ste]
 version = "0.0.18.*"
@@ -166,5 +165,5 @@ solve-group = "test"
 no-default-feature = true
 
 [tasks]
-docker-build = "mkdir -p .tmp/ecoscope-workflows/release/artifacts/\n&& cp -r /tmp/ecoscope-workflows/release/artifacts/* .tmp/ecoscope-workflows/release/artifacts/\n&& docker buildx build -t ecoscope-workflows-wt-bh-village-games-workflow .\n"
+docker-build = "docker buildx build -t ecoscope-workflows-wt-bh-village-games-workflow ."
 ecoscope-workflows-wt-bh-village-games-workflow = "python -m ecoscope_workflows_wt_bh_village_games_workflow.cli"
