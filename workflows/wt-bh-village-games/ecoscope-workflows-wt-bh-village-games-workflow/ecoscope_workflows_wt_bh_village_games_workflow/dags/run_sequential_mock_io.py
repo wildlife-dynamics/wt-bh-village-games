@@ -237,6 +237,8 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            low_threshold=12,
+            high_threshold=30,
             **(params_dict.get("tbl_poaching") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -296,6 +298,8 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            low_threshold=12,
+            high_threshold=30,
             **(params_dict.get("tbl_mangrove") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -356,6 +360,8 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            low_threshold=12,
+            high_threshold=30,
             **(params_dict.get("tbl_fishing") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -416,6 +422,8 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            low_threshold=12,
+            high_threshold=30,
             **(params_dict.get("tbl_arrests") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -475,6 +483,8 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            low_threshold=12,
+            high_threshold=30,
             **(params_dict.get("tbl_turtles") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -532,6 +542,7 @@ def main(params: Params):
         .partial(
             df=clean_data,
             village_column="Village",
+            title_prefix="Monthly Distribution of Illegal Events by Village",
             **(params_dict.get("monthly_heatmap") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -590,6 +601,7 @@ def main(params: Params):
             df=clean_data,
             village="Darakasi to Watamu",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v01") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -648,6 +660,7 @@ def main(params: Params):
             df=clean_data,
             village="Dongokundu to Sita",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v02") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -706,6 +719,7 @@ def main(params: Params):
             df=clean_data,
             village="Jacaranda to Kanani",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v03") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -764,6 +778,7 @@ def main(params: Params):
             df=clean_data,
             village="Kanani to Darakasi",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v04") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -822,6 +837,7 @@ def main(params: Params):
             df=clean_data,
             village="Kivunjeni to Wesa",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v05") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -880,6 +896,7 @@ def main(params: Params):
             df=clean_data,
             village="Magangani to Mida",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v06") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -938,6 +955,7 @@ def main(params: Params):
             df=clean_data,
             village="Marafiki to Uyombo",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v07") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -996,6 +1014,7 @@ def main(params: Params):
             df=clean_data,
             village="Mawe Ya Kati to Jacaranda",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v08") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1054,6 +1073,7 @@ def main(params: Params):
             df=clean_data,
             village="Mid Mayungu to Mawe Ya Kati",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v09") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1112,6 +1132,7 @@ def main(params: Params):
             df=clean_data,
             village="Mida to Marafiki",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v10") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1170,6 +1191,7 @@ def main(params: Params):
             df=clean_data,
             village="Sita to Magangani",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v11") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1228,6 +1250,7 @@ def main(params: Params):
             df=clean_data,
             village="Uyombo to Kivunjeni",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v12") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1286,6 +1309,7 @@ def main(params: Params):
             df=clean_data,
             village="Watamu to Dongokundu",
             village_column="Village",
+            damaging_col="Damaging coral activity",
             **(params_dict.get("donut_v13") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1346,6 +1370,7 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            no_mangrove_sectors=None,
             **(params_dict.get("lb_poaching") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1473,6 +1498,7 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            no_mangrove_sectors=None,
             **(params_dict.get("lb_fishing") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1533,6 +1559,7 @@ def main(params: Params):
             icons_dir=icons_input,
             station_column="Station",
             village_column="Village",
+            no_mangrove_sectors=None,
             **(params_dict.get("lb_arrests") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1591,6 +1618,7 @@ def main(params: Params):
             village="Darakasi to Watamu",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v01") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1650,6 +1678,7 @@ def main(params: Params):
             village="Dongokundu to Sita",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v02") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1709,6 +1738,7 @@ def main(params: Params):
             village="Magangani to Mida",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v03") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1768,6 +1798,7 @@ def main(params: Params):
             village="Uyombo to Kivunjeni",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v04") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1827,6 +1858,7 @@ def main(params: Params):
             village="Watamu to Dongokundu",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v05") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1886,6 +1918,7 @@ def main(params: Params):
             village="Mida to Marafiki",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v06") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -1945,6 +1978,7 @@ def main(params: Params):
             village="Mawe Ya Kati to Jacaranda",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v07") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2004,6 +2038,7 @@ def main(params: Params):
             village="Mid Mayungu to Mawe Ya Kati",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v08") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2063,6 +2098,7 @@ def main(params: Params):
             village="Marafiki to Uyombo",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v09") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2122,6 +2158,7 @@ def main(params: Params):
             village="Kivunjeni to Wesa",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v10") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2181,6 +2218,7 @@ def main(params: Params):
             village="Kanani to Darakasi",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v11") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2240,6 +2278,7 @@ def main(params: Params):
             village="Jacaranda to Kanani",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v12") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2299,6 +2338,7 @@ def main(params: Params):
             village="Watamu to Dongokundu",
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("ibar_v13") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2357,6 +2397,7 @@ def main(params: Params):
             df=clean_data,
             icons_dir=icons_input,
             village_column="Village",
+            icons_per_row=8,
             **(params_dict.get("all_villages_bar") or {}),
         )
         .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2871,6 +2912,7 @@ def main(params: Params):
             details=wf_details,
             groupers=yearly_groupers,
             widgets=dashboard_widgets,
+            time_range=time_range,
             **(params_dict.get("vg_dashboard") or {}),
         )
         .call()

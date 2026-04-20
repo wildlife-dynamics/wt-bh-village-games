@@ -364,10 +364,7 @@ split_quarterly = (
 # %%
 # parameters
 
-tbl_poaching_params = dict(
-    low_threshold=...,
-    high_threshold=...,
-)
+tbl_poaching_params = dict()
 
 # %%
 # call the task
@@ -383,6 +380,8 @@ tbl_poaching = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        low_threshold=12,
+        high_threshold=30,
         **tbl_poaching_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -476,10 +475,7 @@ widget_tbl_poaching = (
 # %%
 # parameters
 
-tbl_mangrove_params = dict(
-    low_threshold=...,
-    high_threshold=...,
-)
+tbl_mangrove_params = dict()
 
 # %%
 # call the task
@@ -495,6 +491,8 @@ tbl_mangrove = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        low_threshold=12,
+        high_threshold=30,
         **tbl_mangrove_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -588,10 +586,7 @@ widget_tbl_mangrove = (
 # %%
 # parameters
 
-tbl_fishing_params = dict(
-    low_threshold=...,
-    high_threshold=...,
-)
+tbl_fishing_params = dict()
 
 # %%
 # call the task
@@ -607,6 +602,8 @@ tbl_fishing = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        low_threshold=12,
+        high_threshold=30,
         **tbl_fishing_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -700,10 +697,7 @@ widget_tbl_fishing = (
 # %%
 # parameters
 
-tbl_arrests_params = dict(
-    low_threshold=...,
-    high_threshold=...,
-)
+tbl_arrests_params = dict()
 
 # %%
 # call the task
@@ -719,6 +713,8 @@ tbl_arrests = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        low_threshold=12,
+        high_threshold=30,
         **tbl_arrests_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -812,10 +808,7 @@ widget_tbl_arrests = (
 # %%
 # parameters
 
-tbl_turtles_params = dict(
-    low_threshold=...,
-    high_threshold=...,
-)
+tbl_turtles_params = dict()
 
 # %%
 # call the task
@@ -831,6 +824,8 @@ tbl_turtles = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        low_threshold=12,
+        high_threshold=30,
         **tbl_turtles_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -924,9 +919,7 @@ widget_tbl_turtles = (
 # %%
 # parameters
 
-monthly_heatmap_params = dict(
-    title_prefix=...,
-)
+monthly_heatmap_params = dict()
 
 # %%
 # call the task
@@ -936,7 +929,12 @@ monthly_heatmap = (
     draw_monthly_heatmap.set_task_instance_id("monthly_heatmap")
     .handle_errors()
     .with_tracing()
-    .partial(df=clean_data, village_column="Village", **monthly_heatmap_params)
+    .partial(
+        df=clean_data,
+        village_column="Village",
+        title_prefix="Monthly Distribution of Illegal Events by Village",
+        **monthly_heatmap_params,
+    )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
 )
 
@@ -1028,9 +1026,7 @@ widget_heatmap = (
 # %%
 # parameters
 
-donut_v01_params = dict(
-    damaging_col=...,
-)
+donut_v01_params = dict()
 
 # %%
 # call the task
@@ -1044,6 +1040,7 @@ donut_v01 = (
         df=clean_data,
         village="Darakasi to Watamu",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v01_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1137,9 +1134,7 @@ widget_donut_v01 = (
 # %%
 # parameters
 
-donut_v02_params = dict(
-    damaging_col=...,
-)
+donut_v02_params = dict()
 
 # %%
 # call the task
@@ -1153,6 +1148,7 @@ donut_v02 = (
         df=clean_data,
         village="Dongokundu to Sita",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v02_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1246,9 +1242,7 @@ widget_donut_v02 = (
 # %%
 # parameters
 
-donut_v03_params = dict(
-    damaging_col=...,
-)
+donut_v03_params = dict()
 
 # %%
 # call the task
@@ -1262,6 +1256,7 @@ donut_v03 = (
         df=clean_data,
         village="Jacaranda to Kanani",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v03_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1355,9 +1350,7 @@ widget_donut_v03 = (
 # %%
 # parameters
 
-donut_v04_params = dict(
-    damaging_col=...,
-)
+donut_v04_params = dict()
 
 # %%
 # call the task
@@ -1371,6 +1364,7 @@ donut_v04 = (
         df=clean_data,
         village="Kanani to Darakasi",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v04_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1464,9 +1458,7 @@ widget_donut_v04 = (
 # %%
 # parameters
 
-donut_v05_params = dict(
-    damaging_col=...,
-)
+donut_v05_params = dict()
 
 # %%
 # call the task
@@ -1480,6 +1472,7 @@ donut_v05 = (
         df=clean_data,
         village="Kivunjeni to Wesa",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v05_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1573,9 +1566,7 @@ widget_donut_v05 = (
 # %%
 # parameters
 
-donut_v06_params = dict(
-    damaging_col=...,
-)
+donut_v06_params = dict()
 
 # %%
 # call the task
@@ -1589,6 +1580,7 @@ donut_v06 = (
         df=clean_data,
         village="Magangani to Mida",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v06_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1682,9 +1674,7 @@ widget_donut_v06 = (
 # %%
 # parameters
 
-donut_v07_params = dict(
-    damaging_col=...,
-)
+donut_v07_params = dict()
 
 # %%
 # call the task
@@ -1698,6 +1688,7 @@ donut_v07 = (
         df=clean_data,
         village="Marafiki to Uyombo",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v07_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1791,9 +1782,7 @@ widget_donut_v07 = (
 # %%
 # parameters
 
-donut_v08_params = dict(
-    damaging_col=...,
-)
+donut_v08_params = dict()
 
 # %%
 # call the task
@@ -1807,6 +1796,7 @@ donut_v08 = (
         df=clean_data,
         village="Mawe Ya Kati to Jacaranda",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v08_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -1900,9 +1890,7 @@ widget_donut_v08 = (
 # %%
 # parameters
 
-donut_v09_params = dict(
-    damaging_col=...,
-)
+donut_v09_params = dict()
 
 # %%
 # call the task
@@ -1916,6 +1904,7 @@ donut_v09 = (
         df=clean_data,
         village="Mid Mayungu to Mawe Ya Kati",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v09_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -2009,9 +1998,7 @@ widget_donut_v09 = (
 # %%
 # parameters
 
-donut_v10_params = dict(
-    damaging_col=...,
-)
+donut_v10_params = dict()
 
 # %%
 # call the task
@@ -2025,6 +2012,7 @@ donut_v10 = (
         df=clean_data,
         village="Mida to Marafiki",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v10_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -2118,9 +2106,7 @@ widget_donut_v10 = (
 # %%
 # parameters
 
-donut_v11_params = dict(
-    damaging_col=...,
-)
+donut_v11_params = dict()
 
 # %%
 # call the task
@@ -2134,6 +2120,7 @@ donut_v11 = (
         df=clean_data,
         village="Sita to Magangani",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v11_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -2227,9 +2214,7 @@ widget_donut_v11 = (
 # %%
 # parameters
 
-donut_v12_params = dict(
-    damaging_col=...,
-)
+donut_v12_params = dict()
 
 # %%
 # call the task
@@ -2243,6 +2228,7 @@ donut_v12 = (
         df=clean_data,
         village="Uyombo to Kivunjeni",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v12_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -2336,9 +2322,7 @@ widget_donut_v12 = (
 # %%
 # parameters
 
-donut_v13_params = dict(
-    damaging_col=...,
-)
+donut_v13_params = dict()
 
 # %%
 # call the task
@@ -2352,6 +2336,7 @@ donut_v13 = (
         df=clean_data,
         village="Watamu to Dongokundu",
         village_column="Village",
+        damaging_col="Damaging coral activity",
         **donut_v13_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_yearly)
@@ -2445,9 +2430,7 @@ widget_donut_v13 = (
 # %%
 # parameters
 
-lb_poaching_params = dict(
-    no_mangrove_sectors=...,
-)
+lb_poaching_params = dict()
 
 # %%
 # call the task
@@ -2463,6 +2446,7 @@ lb_poaching = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        no_mangrove_sectors=None,
         **lb_poaching_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2672,9 +2656,7 @@ widget_lb_mangrove = (
 # %%
 # parameters
 
-lb_fishing_params = dict(
-    no_mangrove_sectors=...,
-)
+lb_fishing_params = dict()
 
 # %%
 # call the task
@@ -2690,6 +2672,7 @@ lb_fishing = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        no_mangrove_sectors=None,
         **lb_fishing_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2783,9 +2766,7 @@ widget_lb_fishing = (
 # %%
 # parameters
 
-lb_arrests_params = dict(
-    no_mangrove_sectors=...,
-)
+lb_arrests_params = dict()
 
 # %%
 # call the task
@@ -2801,6 +2782,7 @@ lb_arrests = (
         icons_dir=icons_input,
         station_column="Station",
         village_column="Village",
+        no_mangrove_sectors=None,
         **lb_arrests_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -2894,9 +2876,7 @@ widget_lb_arrests = (
 # %%
 # parameters
 
-ibar_v01_params = dict(
-    icons_per_row=...,
-)
+ibar_v01_params = dict()
 
 # %%
 # call the task
@@ -2911,6 +2891,7 @@ ibar_v01 = (
         village="Darakasi to Watamu",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v01_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3004,9 +2985,7 @@ widget_ibar_v01 = (
 # %%
 # parameters
 
-ibar_v02_params = dict(
-    icons_per_row=...,
-)
+ibar_v02_params = dict()
 
 # %%
 # call the task
@@ -3021,6 +3000,7 @@ ibar_v02 = (
         village="Dongokundu to Sita",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v02_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3114,9 +3094,7 @@ widget_ibar_v02 = (
 # %%
 # parameters
 
-ibar_v03_params = dict(
-    icons_per_row=...,
-)
+ibar_v03_params = dict()
 
 # %%
 # call the task
@@ -3131,6 +3109,7 @@ ibar_v03 = (
         village="Magangani to Mida",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v03_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3224,9 +3203,7 @@ widget_ibar_v03 = (
 # %%
 # parameters
 
-ibar_v04_params = dict(
-    icons_per_row=...,
-)
+ibar_v04_params = dict()
 
 # %%
 # call the task
@@ -3241,6 +3218,7 @@ ibar_v04 = (
         village="Uyombo to Kivunjeni",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v04_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3334,9 +3312,7 @@ widget_ibar_v04 = (
 # %%
 # parameters
 
-ibar_v05_params = dict(
-    icons_per_row=...,
-)
+ibar_v05_params = dict()
 
 # %%
 # call the task
@@ -3351,6 +3327,7 @@ ibar_v05 = (
         village="Watamu to Dongokundu",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v05_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3444,9 +3421,7 @@ widget_ibar_v05 = (
 # %%
 # parameters
 
-ibar_v06_params = dict(
-    icons_per_row=...,
-)
+ibar_v06_params = dict()
 
 # %%
 # call the task
@@ -3461,6 +3436,7 @@ ibar_v06 = (
         village="Mida to Marafiki",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v06_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3554,9 +3530,7 @@ widget_ibar_v06 = (
 # %%
 # parameters
 
-ibar_v07_params = dict(
-    icons_per_row=...,
-)
+ibar_v07_params = dict()
 
 # %%
 # call the task
@@ -3571,6 +3545,7 @@ ibar_v07 = (
         village="Mawe Ya Kati to Jacaranda",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v07_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3664,9 +3639,7 @@ widget_ibar_v07 = (
 # %%
 # parameters
 
-ibar_v08_params = dict(
-    icons_per_row=...,
-)
+ibar_v08_params = dict()
 
 # %%
 # call the task
@@ -3681,6 +3654,7 @@ ibar_v08 = (
         village="Mid Mayungu to Mawe Ya Kati",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v08_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3774,9 +3748,7 @@ widget_ibar_v08 = (
 # %%
 # parameters
 
-ibar_v09_params = dict(
-    icons_per_row=...,
-)
+ibar_v09_params = dict()
 
 # %%
 # call the task
@@ -3791,6 +3763,7 @@ ibar_v09 = (
         village="Marafiki to Uyombo",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v09_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3884,9 +3857,7 @@ widget_ibar_v09 = (
 # %%
 # parameters
 
-ibar_v10_params = dict(
-    icons_per_row=...,
-)
+ibar_v10_params = dict()
 
 # %%
 # call the task
@@ -3901,6 +3872,7 @@ ibar_v10 = (
         village="Kivunjeni to Wesa",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v10_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -3994,9 +3966,7 @@ widget_ibar_v10 = (
 # %%
 # parameters
 
-ibar_v11_params = dict(
-    icons_per_row=...,
-)
+ibar_v11_params = dict()
 
 # %%
 # call the task
@@ -4011,6 +3981,7 @@ ibar_v11 = (
         village="Kanani to Darakasi",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v11_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -4104,9 +4075,7 @@ widget_ibar_v11 = (
 # %%
 # parameters
 
-ibar_v12_params = dict(
-    icons_per_row=...,
-)
+ibar_v12_params = dict()
 
 # %%
 # call the task
@@ -4121,6 +4090,7 @@ ibar_v12 = (
         village="Jacaranda to Kanani",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v12_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -4214,9 +4184,7 @@ widget_ibar_v12 = (
 # %%
 # parameters
 
-ibar_v13_params = dict(
-    icons_per_row=...,
-)
+ibar_v13_params = dict()
 
 # %%
 # call the task
@@ -4231,6 +4199,7 @@ ibar_v13 = (
         village="Watamu to Dongokundu",
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **ibar_v13_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -4324,9 +4293,7 @@ widget_ibar_v13 = (
 # %%
 # parameters
 
-all_villages_bar_params = dict(
-    icons_per_row=...,
-)
+all_villages_bar_params = dict()
 
 # %%
 # call the task
@@ -4340,6 +4307,7 @@ all_villages_bar = (
         df=clean_data,
         icons_dir=icons_input,
         village_column="Village",
+        icons_per_row=8,
         **all_villages_bar_params,
     )
     .mapvalues(argnames=["df"], argvalues=split_quarterly)
@@ -5215,7 +5183,6 @@ dashboard_widgets = (
 # parameters
 
 vg_dashboard_params = dict(
-    time_range=...,
     warning=...,
 )
 
@@ -5231,6 +5198,7 @@ vg_dashboard = (
         details=wf_details,
         groupers=yearly_groupers,
         widgets=dashboard_widgets,
+        time_range=time_range,
         **vg_dashboard_params,
     )
     .call()

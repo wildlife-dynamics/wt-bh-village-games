@@ -25,15 +25,12 @@ requirements:
   - name: pandera
     version: "0.26.0"
     channel: conda-forge
-
   - name: geopandas
     version: ">=0.13.0"
     channel: conda-forge
-
   - name: docxtpl
     version: ">=0.16"
     channel: conda-forge
-
   - name: matplotlib
     version: ">=3.7.0"
     channel: conda-forge
@@ -144,9 +141,8 @@ workflow:
 
   # ════════════════════════════════════════════════════════════
   # SECTION 1 — COMMUNITY FEEDBACK TABLES (yearly)
-  # 5 tables, one per activity
   # ════════════════════════════════════════════════════════════
-  #draw table for poaching 
+
   - name: Feedback table - poaching
     id: tbl_poaching
     task: draw_community_feedback_table
@@ -156,11 +152,12 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      low_threshold: 12      # ← hides from UI
+      high_threshold: 30     # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # persist poaching table as html
   - name: Persist feedback - poaching
     id: persist_tbl_poaching
     task: persist_text
@@ -171,23 +168,21 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.tbl_poaching.return }}
 
-  #convert html to PNG for the report
   - name: poaching table png
     id: png_tbl_poaching
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
         timeout: 0
         max_concurrent_pages: 1
-    mapvalues: 
+    mapvalues:
       argnames: html_path
       argvalues: ${{ workflow.persist_tbl_poaching.return }}
 
-  # define poaching table widget
   - name: Widget feedback - poaching
     id: widget_tbl_poaching
     task: create_plot_widget_single_view
@@ -197,7 +192,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_tbl_poaching.return }}
 
-  #draw table for mangrove logging
   - name: Feedback table - mangrove
     id: tbl_mangrove
     task: draw_community_feedback_table
@@ -207,11 +201,12 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      low_threshold: 12      # ← hides from UI
+      high_threshold: 30     # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # Persist mangove logging table
   - name: Persist feedback - mangrove
     id: persist_tbl_mangrove
     task: persist_text
@@ -222,13 +217,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.tbl_mangrove.return }}
 
-  # Convert mangrove logging html to png
   - name: mangrove table png
     id: png_tbl_mangrove
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -238,7 +232,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_tbl_mangrove.return }}
 
-# Create mangrove logging table widget
   - name: Widget feedback - mangrove
     id: widget_tbl_mangrove
     task: create_plot_widget_single_view
@@ -248,7 +241,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_tbl_mangrove.return }}
 
-# Draw illegal fishing table 
   - name: Feedback table - fishing
     id: tbl_fishing
     task: draw_community_feedback_table
@@ -258,11 +250,12 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      low_threshold: 12      # ← hides from UI
+      high_threshold: 30     # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # Persist illegal fishing table
   - name: Persist feedback - fishing
     id: persist_tbl_fishing
     task: persist_text
@@ -273,13 +266,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.tbl_fishing.return }}
 
-  #Convert illegal fishing html to png
   - name: illegal fishing tbl png
     id: png_tbl_fishing
     task: html_to_png
-    partial: 
+    partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -289,7 +281,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_tbl_fishing.return }}
 
-  # Create the table widget for illegal fishing
   - name: Widget feedback - fishing
     id: widget_tbl_fishing
     task: create_plot_widget_single_view
@@ -299,7 +290,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_tbl_fishing.return }}
 
-  # Draw table for arrests
   - name: Feedback table - arrests
     id: tbl_arrests
     task: draw_community_feedback_table
@@ -309,11 +299,12 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      low_threshold: 12      # ← hides from UI
+      high_threshold: 30     # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # Persist arrests table as html
   - name: Persist feedback - arrests
     id: persist_tbl_arrests
     task: persist_text
@@ -324,13 +315,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.tbl_arrests.return }}
 
-  # Convert html to png
   - name: arrests table png
     id: png_tbl_arrests
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -339,8 +329,7 @@ workflow:
     mapvalues:
       argnames: html_path
       argvalues: ${{ workflow.persist_tbl_arrests.return }}
-    
-  # Create table widget for arrests
+
   - name: Widget feedback - arrests
     id: widget_tbl_arrests
     task: create_plot_widget_single_view
@@ -350,7 +339,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_tbl_arrests.return }}
 
-  # Draw turtles sum table
   - name: Feedback table - turtles
     id: tbl_turtles
     task: draw_community_feedback_table
@@ -360,11 +348,12 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      low_threshold: 12      # ← hides from UI
+      high_threshold: 30     # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # Persist table as html
   - name: Persist feedback - turtles
     id: persist_tbl_turtles
     task: persist_text
@@ -375,13 +364,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.tbl_turtles.return }}
 
-  # Convert poaching turtles sum html to png
   - name: poached turtles table png
     id: png_tbl_turtles
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -391,7 +379,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_tbl_turtles.return }}
 
-  # Create the poached turtles sum widget
   - name: Widget feedback - turtles
     id: widget_tbl_turtles
     task: create_plot_widget_single_view
@@ -404,18 +391,18 @@ workflow:
   # ════════════════════════════════════════════════════════════
   # SECTION 2 — MONTHLY HEATMAP (yearly)
   # ════════════════════════════════════════════════════════════
-  # Draw monthly heatmap table
+
   - name: Monthly heatmap
     id: monthly_heatmap
     task: draw_monthly_heatmap
     partial:
       df: ${{ workflow.clean_data.return }}
       village_column: "Village"
+      title_prefix: "Monthly Distribution of Illegal Events by Village"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # Persist the heatmap as html
   - name: Persist monthly heatmap
     id: persist_heatmap
     task: persist_text
@@ -426,13 +413,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.monthly_heatmap.return }}
 
-  # Convert heatmap html to PNG
   - name: monthly heatmap png
     id: png_monthly_heatmap
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -442,7 +428,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_heatmap.return }}
 
-# Create the heatmap widget
   - name: Widget monthly heatmap
     id: widget_heatmap
     task: create_plot_widget_single_view
@@ -454,9 +439,8 @@ workflow:
 
   # ════════════════════════════════════════════════════════════
   # SECTION 3 — PER-VILLAGE DONUT CHARTS (yearly)
-  # One task per village — parameterised via param.yaml
   # ════════════════════════════════════════════════════════════
-  # Create donut chart
+
   - name: Donut - Darakasi to Watamu
     id: donut_v01
     task: draw_village_donut_chart
@@ -464,11 +448,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Darakasi to Watamu"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # Persist donut chart as html
   - name: Persist donut v01
     id: persist_donut_v01
     task: persist_text
@@ -479,13 +463,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v01.return }}
 
-  # Convert html to png
   - name: Donut v01 png
     id: png_donut_v01
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -495,7 +478,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v01.return }}
 
-# Create a widget
   - name: Widget donut v01
     id: widget_donut_v01
     task: create_plot_widget_single_view
@@ -505,7 +487,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v01.return }}
 
-# Create the donut
   - name: Donut - Dongokundu to Sita
     id: donut_v02
     task: draw_village_donut_chart
@@ -513,11 +494,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Dongokundu to Sita"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Persist donut as html
   - name: Persist donut v02
     id: persist_donut_v02
     task: persist_text
@@ -528,13 +509,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v02.return }}
 
-# Convert html to png
   - name: Donut v02 png
     id: png_donut_v02
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -543,8 +523,7 @@ workflow:
     mapvalues:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v02.return }}
-    
-# Create a widget
+
   - name: Widget donut v02
     id: widget_donut_v02
     task: create_plot_widget_single_view
@@ -554,7 +533,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v02.return }}
 
-# Create the donut chat
   - name: Donut - Jacaranda to Kanani
     id: donut_v03
     task: draw_village_donut_chart
@@ -562,11 +540,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Jacaranda to Kanani"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-#Persist donut as html
   - name: Persist donut v03
     id: persist_donut_v03
     task: persist_text
@@ -577,13 +555,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v03.return }}
 
-# Convert html to png
   - name: Donut v03 png
     id: png_donut_v03
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -592,8 +569,7 @@ workflow:
     mapvalues:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v03.return }}
-  
-# Create donut widget
+
   - name: Widget donut v03
     id: widget_donut_v03
     task: create_plot_widget_single_view
@@ -603,7 +579,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v03.return }}
 
-# Draw the dinut chart
   - name: Donut - Kanani to Darakasi
     id: donut_v04
     task: draw_village_donut_chart
@@ -611,11 +586,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Kanani to Darakasi"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Perist donut as html
   - name: Persist donut v04
     id: persist_donut_v04
     task: persist_text
@@ -626,13 +601,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v04.return }}
 
-# Convert html to png
   - name: Donut v04 png
     id: png_donut_v04
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -642,7 +616,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v04.return }}
 
-# Create the widget
   - name: Widget donut v04
     id: widget_donut_v04
     task: create_plot_widget_single_view
@@ -652,7 +625,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v04.return }}
 
-# Create the donut chart
   - name: Donut - Kivunjeni to Wesa
     id: donut_v05
     task: draw_village_donut_chart
@@ -660,11 +632,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Kivunjeni to Wesa"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Persist as html
   - name: Persist donut v05
     id: persist_donut_v05
     task: persist_text
@@ -675,23 +647,21 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v05.return }}
 
-  # Convert html to png
   - name: Donut v05 png
     id: png_donut_v05
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
         timeout: 0
         max_concurrent_pages: 1
     mapvalues:
-      argnames: html_path 
+      argnames: html_path
       argvalues: ${{ workflow.persist_donut_v05.return }}
 
-   # Creat the widget     
   - name: Widget donut v05
     id: widget_donut_v05
     task: create_plot_widget_single_view
@@ -701,7 +671,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v05.return }}
 
-  # Draw the chart
   - name: Donut - Magangani to Mida
     id: donut_v06
     task: draw_village_donut_chart
@@ -709,11 +678,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Magangani to Mida"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Persist html
   - name: Persist donut v06
     id: persist_donut_v06
     task: persist_text
@@ -724,13 +693,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v06.return }}
 
-  # Convert html to png
   - name: Donut v06 png
     id: png_donut_v06
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -740,7 +708,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v06.return }}
 
-  # Creat the widget
   - name: Widget donut v06
     id: widget_donut_v06
     task: create_plot_widget_single_view
@@ -750,7 +717,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v06.return }}
 
-# Create the donut
   - name: Donut - Marafiki to Uyombo
     id: donut_v07
     task: draw_village_donut_chart
@@ -758,11 +724,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Marafiki to Uyombo"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Perist as html
   - name: Persist donut v07
     id: persist_donut_v07
     task: persist_text
@@ -773,13 +739,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v07.return }}
 
-# Convert html to png
   - name: Donut v07 png
     id: png_donut_v07
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -788,8 +753,7 @@ workflow:
     mapvalues:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v07.return }}
-      
- # Create the widget
+
   - name: Widget donut v07
     id: widget_donut_v07
     task: create_plot_widget_single_view
@@ -799,7 +763,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v07.return }}
 
-# Create the donut chart
   - name: Donut - Mawe Ya Kati to Jacaranda
     id: donut_v08
     task: draw_village_donut_chart
@@ -807,11 +770,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Mawe Ya Kati to Jacaranda"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Persist as html
   - name: Persist donut v08
     id: persist_donut_v08
     task: persist_text
@@ -822,13 +785,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v08.return }}
 
-  # Convert html to png
   - name: Donut v08 png
     id: png_donut_v08
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -838,7 +800,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v08.return }}
 
-# Create widget
   - name: Widget donut v08
     id: widget_donut_v08
     task: create_plot_widget_single_view
@@ -848,7 +809,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v08.return }}
 
-# Create the donut chart
   - name: Donut - Mid Mayungu to Mawe Ya Kati
     id: donut_v09
     task: draw_village_donut_chart
@@ -856,11 +816,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Mid Mayungu to Mawe Ya Kati"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Perists html
   - name: Persist donut v09
     id: persist_donut_v09
     task: persist_text
@@ -871,13 +831,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v09.return }}
 
-  # Convert html to png
   - name: Donut v09 png
     id: png_donut_v09
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -887,7 +846,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v09.return }}
 
-  # Create widget     
   - name: Widget donut v09
     id: widget_donut_v09
     task: create_plot_widget_single_view
@@ -897,7 +855,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v09.return }}
 
-  # Create donut 
   - name: Donut - Mida to Marafiki
     id: donut_v10
     task: draw_village_donut_chart
@@ -905,11 +862,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Mida to Marafiki"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Persists as html
   - name: Persist donut v10
     id: persist_donut_v10
     task: persist_text
@@ -920,13 +877,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v10.return }}
 
-  # Convert html to png
   - name: Donut v10 png
     id: png_donut_v10
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -936,7 +892,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v10.return }}
 
-  # Create widget
   - name: Widget donut v10
     id: widget_donut_v10
     task: create_plot_widget_single_view
@@ -946,7 +901,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v10.return }}
 
-# Create donut
   - name: Donut - Sita to Magangani
     id: donut_v11
     task: draw_village_donut_chart
@@ -954,11 +908,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Sita to Magangani"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Persits as html
   - name: Persist donut v11
     id: persist_donut_v11
     task: persist_text
@@ -969,13 +923,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v11.return }}
 
-  # Convert html to png
   - name: Donut v11 png
     id: png_donut_v11
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -985,7 +938,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v11.return }}
 
-   # Create widget     
   - name: Widget donut v11
     id: widget_donut_v11
     task: create_plot_widget_single_view
@@ -995,7 +947,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v11.return }}
 
-# Create the chart
   - name: Donut - Uyombo to Kivunjeni
     id: donut_v12
     task: draw_village_donut_chart
@@ -1003,11 +954,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Uyombo to Kivunjeni"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-# Persist as html
   - name: Persist donut v12
     id: persist_donut_v12
     task: persist_text
@@ -1018,13 +969,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v12.return }}
 
-  # Convert html to png
   - name: Donut v12 png
     id: png_donut_v12
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1032,9 +982,8 @@ workflow:
         max_concurrent_pages: 1
     mapvalues:
       argnames: html_path
-      argvalues: ${{ workflow.persist_donut_v12.return }}  
+      argvalues: ${{ workflow.persist_donut_v12.return }}
 
-  # Create a widget      
   - name: Widget donut v12
     id: widget_donut_v12
     task: create_plot_widget_single_view
@@ -1044,7 +993,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_donut_v12.return }}
 
- # Create the chart
   - name: Donut - Watamu to Dongokundu
     id: donut_v13
     task: draw_village_donut_chart
@@ -1052,11 +1000,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       village: "Watamu to Dongokundu"
       village_column: "Village"
+      damaging_col: "Damaging coral activity"  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_yearly.return }}
 
-  # Persist as html
   - name: Persist donut v13
     id: persist_donut_v13
     task: persist_text
@@ -1067,13 +1015,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.donut_v13.return }}
 
-  # Convert html to png
   - name: Donut v13 png
     id: png_donut_v13
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1083,7 +1030,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_donut_v13.return }}
 
-  # Create a widget
   - name: Widget donut v13
     id: widget_donut_v13
     task: create_plot_widget_single_view
@@ -1106,11 +1052,11 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      no_mangrove_sectors: null  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-  # Persist poaching as html
   - name: Persist lb poaching
     id: persist_lb_poaching
     task: persist_text
@@ -1121,13 +1067,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.lb_poaching.return }}
 
-  # Convert poaching html to png
   - name: Poaching lb png
     id: png_lb_poaching
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1137,7 +1082,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_lb_poaching.return }}
 
-# Create a widget
   - name: Widget lb poaching
     id: widget_lb_poaching
     task: create_plot_widget_single_view
@@ -1147,7 +1091,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_lb_poaching.return }}
 
-# Create mangrove leaderboard
   - name: Leaderboard - mangrove
     id: lb_mangrove
     task: draw_activity_leaderboard
@@ -1167,7 +1110,6 @@ workflow:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-  # Persist html
   - name: Persist lb mangrove
     id: persist_lb_mangrove
     task: persist_text
@@ -1178,13 +1120,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.lb_mangrove.return }}
 
-  # Convert html to png
   - name: Mangrove lb png
     id: png_lb_mangrove
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1194,7 +1135,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_lb_mangrove.return }}
 
-# Create a widget
   - name: Widget lb mangrove
     id: widget_lb_mangrove
     task: create_plot_widget_single_view
@@ -1204,7 +1144,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_lb_mangrove.return }}
 
-  # Create leaderboard
   - name: Leaderboard - fishing
     id: lb_fishing
     task: draw_activity_leaderboard
@@ -1214,11 +1153,11 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      no_mangrove_sectors: null  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-  # Persits html
   - name: Persist lb fishing
     id: persist_lb_fishing
     task: persist_text
@@ -1229,13 +1168,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.lb_fishing.return }}
 
-# Convert html to png
   - name: Fishing lb png
     id: png_lb_fishing
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1245,7 +1183,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_lb_fishing.return }}
 
-# Create widget
   - name: Widget lb fishing
     id: widget_lb_fishing
     task: create_plot_widget_single_view
@@ -1255,7 +1192,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_lb_fishing.return }}
 
-  # Create leaderboard
   - name: Leaderboard - arrests
     id: lb_arrests
     task: draw_activity_leaderboard
@@ -1265,11 +1201,11 @@ workflow:
       icons_dir: ${{ workflow.icons_input.return }}
       station_column: "Station"
       village_column: "Village"
+      no_mangrove_sectors: null  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist lb arrests
     id: persist_lb_arrests
     task: persist_text
@@ -1280,13 +1216,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.lb_arrests.return }}
 
-# Convert html to png
   - name: Arrests lb png
     id: png_lb_arrests
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1296,7 +1231,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_lb_arrests.return }}
 
-  # Create widget
   - name: Widget lb arrests
     id: widget_lb_arrests
     task: create_plot_widget_single_view
@@ -1318,11 +1252,11 @@ workflow:
       village: "Darakasi to Watamu"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Perists html
   - name: Persist ibar v01
     id: persist_ibar_v01
     task: persist_text
@@ -1333,13 +1267,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v01.return }}
 
-  # COnvert html to PNG
   - name: Convert ibar v01 to PNG
     id: png_ibar_v01
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1349,7 +1282,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v01.return }}
 
-# Create a widget
   - name: Widget ibar v01
     id: widget_ibar_v01
     task: create_plot_widget_single_view
@@ -1359,7 +1291,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v01.return }}
 
-  # Create the icon bar
   - name: Icon bar - Dongokundu to Sita
     id: ibar_v02
     task: draw_village_icon_bar
@@ -1368,11 +1299,11 @@ workflow:
       village: "Dongokundu to Sita"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v02
     id: persist_ibar_v02
     task: persist_text
@@ -1383,13 +1314,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v02.return }}
 
-  # COnvert html to PNG
   - name: Convert ibar v02 to PNG
     id: png_ibar_v02
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1399,7 +1329,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v02.return }}
 
-# Create widget
   - name: Widget ibar v02
     id: widget_ibar_v02
     task: create_plot_widget_single_view
@@ -1409,7 +1338,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v02.return }}
 
-# Draw the icon bar
   - name: Icon bar - Magangani to Mida
     id: ibar_v03
     task: draw_village_icon_bar
@@ -1418,11 +1346,11 @@ workflow:
       village: "Magangani to Mida"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v03
     id: persist_ibar_v03
     task: persist_text
@@ -1433,23 +1361,21 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v03.return }}
 
-# Convert html to PNG
   - name: Convert ibar v03 to PNG
     id: png_ibar_v03
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
         timeout: 0
         max_concurrent_pages: 1
-    mapvalues: 
+    mapvalues:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v03.return }}
 
-# Create a widget
   - name: Widget ibar v03
     id: widget_ibar_v03
     task: create_plot_widget_single_view
@@ -1459,7 +1385,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v03.return }}
 
-# Draw the icon bar
   - name: Icon bar - Uyombo to Kivunjeni
     id: ibar_v04
     task: draw_village_icon_bar
@@ -1468,11 +1393,11 @@ workflow:
       village: "Uyombo to Kivunjeni"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v04
     id: persist_ibar_v04
     task: persist_text
@@ -1483,13 +1408,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v04.return }}
 
-# Convert html to PNG
   - name: Convert ibar v04 to PNG
     id: png_ibar_v04
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1499,7 +1423,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v04.return }}
 
-# Create a widget
   - name: Widget ibar v04
     id: widget_ibar_v04
     task: create_plot_widget_single_view
@@ -1509,7 +1432,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v04.return }}
 
-# Draw the icon bar
   - name: Icon bar - Watamu to Dongokundu
     id: ibar_v05
     task: draw_village_icon_bar
@@ -1518,11 +1440,11 @@ workflow:
       village: "Watamu to Dongokundu"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v05
     id: persist_ibar_v05
     task: persist_text
@@ -1533,13 +1455,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v05.return }}
 
-# Convert html to PNG
   - name: Convert ibar v05 to PNG
     id: png_ibar_v05
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1549,7 +1470,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v05.return }}
 
-# Create a widget
   - name: Widget ibar v05
     id: widget_ibar_v05
     task: create_plot_widget_single_view
@@ -1559,7 +1479,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v05.return }}
 
-# Draw the icon bar
   - name: Icon bar - Mida to Marafiki
     id: ibar_v06
     task: draw_village_icon_bar
@@ -1568,11 +1487,11 @@ workflow:
       village: "Mida to Marafiki"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Perist html
   - name: Persist ibar v06
     id: persist_ibar_v06
     task: persist_text
@@ -1583,13 +1502,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v06.return }}
 
-# Convert html to png
   - name: Convert ibar v06 to PNG
     id: png_ibar_v06
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1599,7 +1517,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v06.return }}
 
-# Create a widget
   - name: Widget ibar v06
     id: widget_ibar_v06
     task: create_plot_widget_single_view
@@ -1609,7 +1526,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v06.return }}
 
-# Draw the icon bar
   - name: Icon bar - Mawe Ya Kati to Jacaranda
     id: ibar_v07
     task: draw_village_icon_bar
@@ -1618,11 +1534,11 @@ workflow:
       village: "Mawe Ya Kati to Jacaranda"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v07
     id: persist_ibar_v07
     task: persist_text
@@ -1631,15 +1547,14 @@ workflow:
       filename_suffix: ibar_mawe_jacaranda
     mapvalues:
       argnames: text
-      argvalues: ${{ workflow.ibar_v07.return }}  
+      argvalues: ${{ workflow.ibar_v07.return }}
 
-# Convert html to png
   - name: Convert ibar v07 to PNG
     id: png_ibar_v07
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1649,7 +1564,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v07.return }}
 
-# Create a widget
   - name: Widget ibar v07
     id: widget_ibar_v07
     task: create_plot_widget_single_view
@@ -1659,7 +1573,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v07.return }}
 
-# Draw the icon bar
   - name: Icon bar - Mid Mayungu to Mawe Ya Kati
     id: ibar_v08
     task: draw_village_icon_bar
@@ -1668,11 +1581,11 @@ workflow:
       village: "Mid Mayungu to Mawe Ya Kati"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v08
     id: persist_ibar_v08
     task: persist_text
@@ -1683,13 +1596,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v08.return }}
 
-# Convert html to PNG
   - name: Convert ibar v08 to PNG
     id: png_ibar_v08
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1699,7 +1611,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v08.return }}
 
-# Create a widget
   - name: Widget ibar v08
     id: widget_ibar_v08
     task: create_plot_widget_single_view
@@ -1709,7 +1620,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v08.return }}
 
-# Darw the icon bar
   - name: Icon bar - Marafiki to Uyombo
     id: ibar_v09
     task: draw_village_icon_bar
@@ -1718,11 +1628,11 @@ workflow:
       village: "Marafiki to Uyombo"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v09
     id: persist_ibar_v09
     task: persist_text
@@ -1733,13 +1643,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v09.return }}
 
-# Convert html to PNG
   - name: Convert ibar v09 to PNG
     id: png_ibar_v09
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1749,7 +1658,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v09.return }}
 
-# Create a widget
   - name: Widget ibar v09
     id: widget_ibar_v09
     task: create_plot_widget_single_view
@@ -1759,7 +1667,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v09.return }}
 
-# Draw the icon bar
   - name: Icon bar - Kivunjeni to Wesa
     id: ibar_v10
     task: draw_village_icon_bar
@@ -1768,11 +1675,11 @@ workflow:
       village: "Kivunjeni to Wesa"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v10
     id: persist_ibar_v10
     task: persist_text
@@ -1783,13 +1690,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v10.return }}
 
-# Convert html to PNG
   - name: Convert ibar v10 to PNG
     id: png_ibar_v10
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1799,7 +1705,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v10.return }}
 
-# Create a widget
   - name: Widget ibar v10
     id: widget_ibar_v10
     task: create_plot_widget_single_view
@@ -1809,7 +1714,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v10.return }}
 
-# Draw the icon bar
   - name: Icon bar - Kanani to Darakasi
     id: ibar_v11
     task: draw_village_icon_bar
@@ -1818,11 +1722,11 @@ workflow:
       village: "Kanani to Darakasi"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v11
     id: persist_ibar_v11
     task: persist_text
@@ -1833,13 +1737,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v11.return }}
 
-# Convert html to png
   - name: Convert ibar v11 to PNG
     id: png_ibar_v11
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1849,7 +1752,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v11.return }}
 
-# Create a widget
   - name: Widget ibar v11
     id: widget_ibar_v11
     task: create_plot_widget_single_view
@@ -1859,7 +1761,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v11.return }}
 
-# Draw the icon bar
   - name: Icon bar - Jacaranda to Kanani
     id: ibar_v12
     task: draw_village_icon_bar
@@ -1868,11 +1769,11 @@ workflow:
       village: "Jacaranda to Kanani"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v12
     id: persist_ibar_v12
     task: persist_text
@@ -1883,13 +1784,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v12.return }}
 
-# Convert html to PNG
   - name: Convert ibar v12 to PNG
     id: png_ibar_v12
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1899,7 +1799,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v12.return }}
 
-# Create a widget
   - name: Widget ibar v12
     id: widget_ibar_v12
     task: create_plot_widget_single_view
@@ -1909,7 +1808,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v12.return }}
 
-# Draw the icon bar
   - name: Icon bar - Watamu to Dongokundu
     id: ibar_v13
     task: draw_village_icon_bar
@@ -1918,11 +1816,11 @@ workflow:
       village: "Watamu to Dongokundu"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-# Persist html
   - name: Persist ibar v13
     id: persist_ibar_v13
     task: persist_text
@@ -1933,13 +1831,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.ibar_v13.return }}
 
-  # COnvert html to PNG
   - name: Convert ibar v13 to PNG
     id: png_ibar_v13
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -1949,7 +1846,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ibar_v13.return }}
 
-# Create widget
   - name: Widget ibar v13
     id: widget_ibar_v13
     task: create_plot_widget_single_view
@@ -1962,7 +1858,7 @@ workflow:
   # ════════════════════════════════════════════════════════════
   # SECTION 6 — ALL-VILLAGES SUMMARY ICON BAR (quarterly)
   # ════════════════════════════════════════════════════════════
-  # Draw the bar chart
+
   - name: All-villages icon bar
     id: all_villages_bar
     task: draw_all_villages_icon_bar
@@ -1970,11 +1866,11 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
+      icons_per_row: 8  # ← hides from UI
     mapvalues:
       argnames: df
       argvalues: ${{ workflow.split_quarterly.return }}
 
-  # Persist html
   - name: Persist all-villages bar
     id: persist_all_villages_bar
     task: persist_text
@@ -1985,13 +1881,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.all_villages_bar.return }}
 
-  # Convert html to PNG
   - name: Convert all-villages bar to PNG
     id: png_all_villages_bar
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -2001,7 +1896,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_all_villages_bar.return }}
 
-  # Create widget
   - name: Widget all-villages bar
     id: widget_all_villages_bar
     task: create_plot_widget_single_view
@@ -2012,7 +1906,7 @@ workflow:
       argvalues: ${{ workflow.persist_all_villages_bar.return }}
 
   # ════════════════════════════════════════════════════════════
-  # SECTION 7 — ECOMAPS (from patrol-summary, reused here)
+  # SECTION 7 — ECOMAPS
   # ════════════════════════════════════════════════════════════
 
   - name: Split for maps
@@ -2022,7 +1916,6 @@ workflow:
       df: ${{ workflow.clean_data.return }}
       groupers: ${{ workflow.yearly_groupers.return }}
 
-# Draw illegal events masp
   - name: Illegal events map
     id: illegal_events_map
     task: draw_illegal_events_map
@@ -2034,7 +1927,6 @@ workflow:
       argnames: df
       argvalues: ${{ workflow.split_maps.return }}
 
-  # Persist html
   - name: Persist illegal events map
     id: persist_ie_map
     task: persist_text
@@ -2045,13 +1937,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.illegal_events_map.return }}
 
-  # Conert html to PNG
   - name: Convert illegal events map to PNG
     id: png_ie_map
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -2061,7 +1952,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_ie_map.return }}
 
-  # Create widget
   - name: Widget illegal events map
     id: widget_ie_map
     task: create_map_widget_single_view
@@ -2071,7 +1961,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ie_map.return }}
 
-# draw poaching events map
   - name: Poaching map
     id: poaching_map
     task: draw_poaching_map
@@ -2083,7 +1972,6 @@ workflow:
       argnames: df
       argvalues: ${{ workflow.split_maps.return }}
 
-  # Persist html
   - name: Persist poaching map
     id: persist_poaching_map
     task: persist_text
@@ -2094,13 +1982,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.poaching_map.return }}
 
-  # Convert html to PNG
   - name: Convert poaching map to PNG
     id: png_poaching_map
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -2110,7 +1997,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_poaching_map.return }}
 
-# Create a widget
   - name: Widget poaching map
     id: widget_poaching_map
     task: create_map_widget_single_view
@@ -2120,7 +2006,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_poaching_map.return }}
 
-# Mangrove logging map
   - name: Mangrove logging map
     id: mangrove_map
     task: draw_mangrove_logging_map
@@ -2132,7 +2017,6 @@ workflow:
       argnames: df
       argvalues: ${{ workflow.split_maps.return }}
 
-# Persist html
   - name: Persist mangrove map
     id: persist_mangrove_map
     task: persist_text
@@ -2143,13 +2027,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.mangrove_map.return }}
 
-# Convert html to PNG
   - name: Convert mangrove map to PNG
     id: png_mangrove_map
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -2159,7 +2042,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_mangrove_map.return }}
 
-# Create a widget
   - name: Widget mangrove map
     id: widget_mangrove_map
     task: create_map_widget_single_view
@@ -2169,7 +2051,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_mangrove_map.return }}
 
-# Draw illegal fishing map
   - name: Illegal fishing map
     id: illegal_fishing_map
     task: draw_illegal_fishing_map
@@ -2181,7 +2062,6 @@ workflow:
       argnames: df
       argvalues: ${{ workflow.split_maps.return }}
 
-  # Persist html
   - name: Persist illegal fishing map
     id: persist_illegal_fishing_map
     task: persist_text
@@ -2192,13 +2072,12 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.illegal_fishing_map.return }}
 
-  # Convert html to PNG
   - name: Convert illegal fishing map to PNG
     id: png_illegal_fishing_map
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
@@ -2208,7 +2087,6 @@ workflow:
       argnames: html_path
       argvalues: ${{ workflow.persist_illegal_fishing_map.return }}
 
-  # Create a widget
   - name: Widget illegal fishing map
     id: widget_illegal_fishing_map
     task: create_map_widget_single_view
@@ -2218,7 +2096,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_illegal_fishing_map.return }}
 
-  # Draw arrests map
   - name: Arrests map
     id: arrests_map
     task: draw_arrests_map
@@ -2230,7 +2107,6 @@ workflow:
       argnames: df
       argvalues: ${{ workflow.split_maps.return }}
 
-  # Persist html
   - name: Persist arrests map
     id: persist_arrests_map
     task: persist_text
@@ -2241,23 +2117,21 @@ workflow:
       argnames: text
       argvalues: ${{ workflow.arrests_map.return }}
 
-  # Convert html to PNG
   - name: Convert arrests map to PNG
     id: png_arrests_map
     task: html_to_png
     partial:
       output_dir: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      config: 
+      config:
         full_page: false
         device_scale_factor: 1.0
         wait_for_timeout: 1000
         timeout: 0
         max_concurrent_pages: 1
-    mapvalues: 
+    mapvalues:
       argnames: html_path
       argvalues: ${{ workflow.persist_arrests_map.return }}
 
-  # Create a widget
   - name: Widget arrests map
     id: widget_arrests_map
     task: create_map_widget_single_view
@@ -2267,8 +2141,6 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_arrests_map.return }}
 
-  
-  
   # ════════════════════════════════════════════════════════════
   # SECTION 8 — REPORT
   # ════════════════════════════════════════════════════════════
@@ -2293,18 +2165,12 @@ workflow:
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
       report_year: ${{ workflow.report_year.return }}
       generation_date: ${{ workflow.report_generation_date.return }}
-
-      # ── Section 1: Community Feedback Tables ─────────────
       feedback_poaching_png: ${{ workflow.png_tbl_poaching.return }}
       feedback_mangrove_png: ${{ workflow.png_tbl_mangrove.return }}
       feedback_fishing_png: ${{ workflow.png_tbl_fishing.return }}
       feedback_arrests_png: ${{ workflow.png_tbl_arrests.return }}
       feedback_turtles_png: ${{ workflow.png_tbl_turtles.return }}
-
-      # ── Section 2: Monthly Heatmap ────────────────────────
       monthly_heatmap_png: ${{ workflow.png_monthly_heatmap.return }}
-
-      # ── Section 3: Per-Village Donut Charts ──────────────
       donut_darakasi_watamu_png: ${{ workflow.png_donut_v01.return }}
       donut_dongokundu_sita_png: ${{ workflow.png_donut_v02.return }}
       donut_jacaranda_kanani_png: ${{ workflow.png_donut_v03.return }}
@@ -2318,14 +2184,10 @@ workflow:
       donut_sita_magangani_png: ${{ workflow.png_donut_v11.return }}
       donut_uyombo_kivunjeni_png: ${{ workflow.png_donut_v12.return }}
       donut_watamu_dongokundu_png: ${{ workflow.png_donut_v13.return }}
-
-      # ── Section 4: Quarterly Leaderboards ────────────────
       lb_poaching_png: ${{ workflow.png_lb_poaching.return }}
       lb_mangrove_png: ${{ workflow.png_lb_mangrove.return }}
       lb_fishing_png: ${{ workflow.png_lb_fishing.return }}
       lb_arrests_png: ${{ workflow.png_lb_arrests.return }}
-
-      # ── Section 5: Per-Village Icon Bars ─────────────────
       ibar_darakasi_watamu_png: ${{ workflow.png_ibar_v01.return }}
       ibar_dongokundu_sita_png: ${{ workflow.png_ibar_v02.return }}
       ibar_magangani_mida_png: ${{ workflow.png_ibar_v03.return }}
@@ -2338,17 +2200,13 @@ workflow:
       ibar_kivunjeni_wesa_png: ${{ workflow.png_ibar_v10.return }}
       ibar_kanani_darakasi_png: ${{ workflow.png_ibar_v11.return }}
       ibar_jacaranda_kanani_png: ${{ workflow.png_ibar_v12.return }}
-
-      # ── Section 6: All-Villages Summary ──────────────────
       all_villages_icon_bar_png: ${{ workflow.png_all_villages_bar.return }}
-
-      # ── Section 7: Maps ───────────────────────────────────
       illegal_events_map_png: ${{ workflow.png_ie_map.return }}
       poaching_map_png: ${{ workflow.png_poaching_map.return }}
       mangrove_map_png: ${{ workflow.png_mangrove_map.return }}
       illegal_fishing_map_png: ${{ workflow.png_illegal_fishing_map.return }}
       arrests_map_png: ${{ workflow.png_arrests_map.return }}
-  
+
   # ════════════════════════════════════════════════════════════
   # SECTION 9 — DASHBOARD
   # ════════════════════════════════════════════════════════════
@@ -2401,7 +2259,7 @@ workflow:
         - ${{ workflow.widget_ibar_v07.return }}
         - ${{ workflow.widget_ibar_v08.return }}
         - ${{ workflow.widget_ibar_v09.return }}
-        - ${{ workflow.widget_ibar_v10.return }}  
+        - ${{ workflow.widget_ibar_v10.return }}
         - ${{ workflow.widget_ibar_v11.return }}
         - ${{ workflow.widget_ibar_v12.return }}
         - ${{ workflow.widget_ibar_v13.return }}
@@ -2421,3 +2279,4 @@ workflow:
       details: ${{ workflow.wf_details.return }}
       groupers: ${{ workflow.yearly_groupers.return }}
       widgets: ${{ workflow.dashboard_widgets.return }}
+      time_range: ${{ workflow.time_range.return }}  # ← hides from UI
