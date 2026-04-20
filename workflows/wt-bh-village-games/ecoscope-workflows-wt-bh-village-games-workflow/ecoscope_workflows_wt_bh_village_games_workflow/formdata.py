@@ -34,10 +34,6 @@ class LocalFile(BaseModel):
     )
 
 
-class ValueGrouper(BaseModel):
-    index_name: Optional[str] = None
-
-
 class TimeRange(BaseModel):
     model_config = ConfigDict(
         extra="forbid",

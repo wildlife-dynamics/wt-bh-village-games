@@ -41,13 +41,13 @@ requirements:
     version: ">=1.9.0"
     channel: conda-forge
 
-rjsf-overrides:
-  $defs:
-    ValueGrouper.properties.index_name.oneOf:
-      - const: Year
-        title: Year
-      - const: Quarter
-        title: Quarter
+# rjsf-overrides:
+#   $defs:
+#     ValueGrouper.properties.index_name.oneOf:
+#       - const: Year
+#         title: Year
+#       - const: Quarter
+#         title: Quarter
 
 workflow:
 
