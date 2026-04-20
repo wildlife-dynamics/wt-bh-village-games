@@ -79,28 +79,7 @@
         "input_method"
       ],
       "type": "object",
-      "title": "CSV input"
-    },
-    "load_data": {
-      "additionalProperties": false,
-      "properties": {
-        "layer": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Layer",
-          "description": "Layer name for GeoPackage files (optional, only used for .gpkg files)"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "Load data"
+      "title": "CSV input from CSV"
     },
     "icons_input": {
       "additionalProperties": false,
@@ -259,7 +238,6 @@
       "wf_details",
       "time_range",
       "csv_input",
-      "load_data",
       "icons_input",
       "marine_layers_input",
       "report_template_input"

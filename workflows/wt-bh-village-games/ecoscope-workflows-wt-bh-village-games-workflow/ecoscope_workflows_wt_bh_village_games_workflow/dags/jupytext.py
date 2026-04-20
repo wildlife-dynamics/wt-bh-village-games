@@ -125,7 +125,7 @@ time_range = (
 
 
 # %% [markdown]
-# ## CSV input
+# ## CSV input from CSV
 
 # %%
 # parameters
@@ -153,9 +153,7 @@ csv_input = (
 # %%
 # parameters
 
-load_data_params = dict(
-    layer=...,
-)
+load_data_params = dict()
 
 # %%
 # call the task
@@ -165,7 +163,12 @@ load_data = (
     load_df.set_task_instance_id("load_data")
     .handle_errors()
     .with_tracing()
-    .partial(file_path=csv_input, deserialize_json=False, **load_data_params)
+    .partial(
+        file_path=csv_input,
+        layer="landDx_polygons",
+        deserialize_json=False,
+        **load_data_params,
+    )
     .call()
 )
 
