@@ -201,22 +201,6 @@
       ],
       "title": "Use local file",
       "type": "object"
-    },
-    "ValueGrouper": {
-      "properties": {
-        "index_name": {
-          "oneOf": [
-            {
-              "const": "Year",
-              "title": "Year"
-            },
-            {
-              "const": "Quarter",
-              "title": "Quarter"
-            }
-          ]
-        }
-      }
     }
   },
   "uiSchema": {

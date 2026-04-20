@@ -5,8 +5,8 @@
 
 ```yaml
 # fingerprint:
-artifacts_sha256_basic: f286043d6e5fc4ae616cdffba4d0407f24d167c38d082a4f412cdebeafc8863e
-artifacts_sha256_strict: 2eac865b6fa7c13fed552ae242d45040c688314a351c90e5601b23b4bdd0e159
+artifacts_sha256_basic: a70a6358bc260cca21d4ce4100b29c31ef5dc2028d2cc04538beb8eb5fdd6a5f
+artifacts_sha256_strict: 55b9c6bfd183d60ee56254bb96fa82d8dd1d627700b2b20123ce389419b91f25
 installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows/
   name: ecoscope-workflows-core
@@ -48,7 +48,7 @@ installed_requirements:
   name: fiona
   version: {version: ==1.10.1}
 params_sha256: ac190ca7ecbc5f01685b0d56f84f29917eda7a0691425501a2a1eea01c73fa7a
-spec_sha256: ad7ba1f5d736d1989ad706747aea66c2c1fddcd3408a450d2cbdbee7856d1ce4
+spec_sha256: 933f7530cf49e346c153183de092a90ce48e8e4c66dcae51391c68995052dfa1
 
 ```
 
