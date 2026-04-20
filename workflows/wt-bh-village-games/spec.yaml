@@ -61,7 +61,7 @@ workflow:
     task: set_time_range
 
   # ── Inputs ────────────────────────────────────────────────
-  - name: CSV input
+  - name: CSV input from CSV
     id: csv_input
     task: get_file_path
     partial:
@@ -72,6 +72,7 @@ workflow:
     task: load_df
     partial:
       file_path: ${{ workflow.csv_input.return }}
+      layer: landDx_polygons
       deserialize_json: false
 
   - name: Icons directory

@@ -17,17 +17,6 @@ class WfDetails(BaseModel):
     description: Optional[str] = Field("", title="Workflow Description")
 
 
-class LoadData(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    layer: Optional[str] = Field(
-        None,
-        description="Layer name for GeoPackage files (optional, only used for .gpkg files)",
-        title="Layer",
-    )
-
-
 class TimezoneInfo(BaseModel):
     label: str = Field(..., title="Label")
     tzCode: str = Field(..., title="Tzcode")
@@ -97,8 +86,7 @@ class Params(BaseModel):
     time_range: Optional[TimeRange] = Field(
         None, description="Choose the period of time to analyze.", title="Time Range"
     )
-    csv_input: Optional[CsvInput] = Field(None, title="CSV input")
-    load_data: Optional[LoadData] = Field(None, title="Load data")
+    csv_input: Optional[CsvInput] = Field(None, title="CSV input from CSV")
     icons_input: Optional[IconsInput] = Field(None, title="Icons directory")
     marine_layers_input: Optional[MarineLayersInput] = Field(
         None, title="Marine layers path"

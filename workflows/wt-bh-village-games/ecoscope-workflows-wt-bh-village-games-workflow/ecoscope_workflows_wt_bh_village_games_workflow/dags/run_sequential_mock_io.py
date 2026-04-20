@@ -117,6 +117,7 @@ def main(params: Params):
         .with_tracing()
         .partial(
             file_path=csv_input,
+            layer="landDx_polygons",
             deserialize_json=False,
             **(params_dict.get("load_data") or {}),
         )

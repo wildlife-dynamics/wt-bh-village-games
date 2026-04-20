@@ -394,6 +394,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "file_path": DependsOn("csv_input"),
+                "layer": "landDx_polygons",
                 "deserialize_json": False,
             }
             | (params_dict.get("load_data") or {}),
