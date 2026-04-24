@@ -79,7 +79,7 @@ from ecoscope_workflows_ext_ste.tasks import get_file_path as get_file_path
 # %%
 # parameters
 
-wf_details_params = dict(
+workflow_details_params = dict(
     name=...,
     description=...,
     image_url=...,
@@ -89,11 +89,11 @@ wf_details_params = dict(
 # call the task
 
 
-wf_details = (
-    set_workflow_details.set_task_instance_id("wf_details")
+workflow_details = (
+    set_workflow_details.set_task_instance_id("workflow_details")
     .handle_errors()
     .with_tracing()
-    .partial(**wf_details_params)
+    .partial(**workflow_details_params)
     .call()
 )
 
@@ -5198,7 +5198,7 @@ vg_dashboard = (
     .handle_errors()
     .with_tracing()
     .partial(
-        details=wf_details,
+        details=workflow_details,
         groupers=yearly_groupers,
         widgets=dashboard_widgets,
         time_range=time_range,

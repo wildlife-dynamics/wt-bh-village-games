@@ -53,7 +53,7 @@ workflow:
 
   # ── Workflow meta ─────────────────────────────────────────
   - name: Workflow Details
-    id: wf_details
+    id: workflow_details
     task: set_workflow_details
 
   - name: Time Range
@@ -2277,7 +2277,7 @@ workflow:
     id: vg_dashboard
     task: gather_dashboard
     partial:
-      details: ${{ workflow.wf_details.return }}
+      details: ${{ workflow.workflow_details.return }}
       groupers: ${{ workflow.yearly_groupers.return }}
       widgets: ${{ workflow.dashboard_widgets.return }}
       time_range: ${{ workflow.time_range.return }}  # ← hides from UI
