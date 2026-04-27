@@ -71,7 +71,7 @@ def main(params: Params):
     params_dict = json.loads(params.model_dump_json(exclude_unset=True))
 
     dependencies = {
-        "wf_details": [],
+        "workflow_details": [],
         "time_range": [],
         "csv_input": [],
         "load_data": ["csv_input"],
@@ -348,7 +348,7 @@ def main(params: Params):
         ],
         "dashboard_widgets": ["grouped_yearly"],
         "vg_dashboard": [
-            "wf_details",
+            "workflow_details",
             "yearly_groupers",
             "dashboard_widgets",
             "time_range",
@@ -356,13 +356,13 @@ def main(params: Params):
     }
 
     nodes = {
-        "wf_details": Node(
+        "workflow_details": Node(
             async_task=set_workflow_details.validate()
-            .set_task_instance_id("wf_details")
+            .set_task_instance_id("workflow_details")
             .handle_errors()
             .with_tracing()
             .set_executor("lithops"),
-            partial=(params_dict.get("wf_details") or {}),
+            partial=(params_dict.get("workflow_details") or {}),
             method="call",
         ),
         "time_range": Node(
@@ -3884,7 +3884,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "details": DependsOn("wf_details"),
+                "details": DependsOn("workflow_details"),
                 "groupers": DependsOn("yearly_groupers"),
                 "widgets": DependsOn("dashboard_widgets"),
                 "time_range": DependsOn("time_range"),

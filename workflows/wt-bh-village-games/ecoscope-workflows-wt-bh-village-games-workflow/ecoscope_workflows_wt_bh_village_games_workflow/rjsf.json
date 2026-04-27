@@ -1,6 +1,6 @@
 {
   "properties": {
-    "wf_details": {
+    "workflow_details": {
       "additionalProperties": false,
       "properties": {
         "name": {
@@ -204,7 +204,7 @@
     }
   },
   "uiSchema": {
-    "wf_details": {
+    "workflow_details": {
       "ui:order": [
         "name",
         "description"
@@ -219,7 +219,7 @@
       ]
     },
     "ui:order": [
-      "wf_details",
+      "workflow_details",
       "time_range",
       "csv_input",
       "icons_input",

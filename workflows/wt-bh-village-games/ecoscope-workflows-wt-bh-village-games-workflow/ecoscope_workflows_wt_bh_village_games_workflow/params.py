@@ -9,7 +9,7 @@ from typing import Optional, Union
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class WfDetails(BaseModel):
+class WorkflowDetails(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
@@ -78,7 +78,7 @@ class Params(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    wf_details: Optional[WfDetails] = Field(
+    workflow_details: Optional[WorkflowDetails] = Field(
         None,
         description="Add information that will help to differentiate this workflow from another.",
         title="Workflow Details",

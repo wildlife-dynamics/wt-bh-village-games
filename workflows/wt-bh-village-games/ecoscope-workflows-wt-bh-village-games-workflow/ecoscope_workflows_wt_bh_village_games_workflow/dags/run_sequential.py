@@ -69,12 +69,12 @@ from ..params import Params
 def main(params: Params):
     params_dict = json.loads(params.model_dump_json(exclude_unset=True))
 
-    wf_details = (
+    workflow_details = (
         set_workflow_details.validate()
-        .set_task_instance_id("wf_details")
+        .set_task_instance_id("workflow_details")
         .handle_errors()
         .with_tracing()
-        .partial(**(params_dict.get("wf_details") or {}))
+        .partial(**(params_dict.get("workflow_details") or {}))
         .call()
     )
 
@@ -2899,7 +2899,7 @@ def main(params: Params):
         .handle_errors()
         .with_tracing()
         .partial(
-            details=wf_details,
+            details=workflow_details,
             groupers=yearly_groupers,
             widgets=dashboard_widgets,
             time_range=time_range,
