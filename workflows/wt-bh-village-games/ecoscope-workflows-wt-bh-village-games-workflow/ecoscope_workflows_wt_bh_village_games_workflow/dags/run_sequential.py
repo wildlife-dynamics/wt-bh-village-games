@@ -61,7 +61,9 @@ from ecoscope_workflows_ext_bh_village_games.tasks import (
 )
 from ecoscope_workflows_ext_custom.tasks.io import html_to_png as html_to_png
 from ecoscope_workflows_ext_custom.tasks.io import load_df as load_df
-from ecoscope_workflows_ext_ste.tasks import get_file_path as get_file_path
+from ecoscope_workflows_ext_ste.tasks import (
+    fetch_and_persist_file as fetch_and_persist_file,
+)
 
 from ..params import Params
 
@@ -88,12 +90,14 @@ def main(params: Params):
     )
 
     csv_input = (
-        get_file_path.validate()
+        fetch_and_persist_file.validate()
         .set_task_instance_id("csv_input")
         .handle_errors()
         .with_tracing()
         .partial(
+            url="https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/patrol_findings_with_village.csv",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            unzip=False,
             **(params_dict.get("csv_input") or {}),
         )
         .call()
@@ -114,36 +118,42 @@ def main(params: Params):
     )
 
     icons_input = (
-        get_file_path.validate()
+        fetch_and_persist_file.validate()
         .set_task_instance_id("icons_input")
         .handle_errors()
         .with_tracing()
         .partial(
+            url="https://drive.google.com/uc?export=download&id=1jwJiY4Uayu2RNQ2Hq411ba-M6112OKTC",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            unzip=True,
             **(params_dict.get("icons_input") or {}),
         )
         .call()
     )
 
     marine_layers_input = (
-        get_file_path.validate()
+        fetch_and_persist_file.validate()
         .set_task_instance_id("marine_layers_input")
         .handle_errors()
         .with_tracing()
         .partial(
+            url="https://drive.google.com/uc?export=download&id=1pNu0xS9lMN-O4SPpSiBihYcUTOGwN5_H",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            unzip=True,
             **(params_dict.get("marine_layers_input") or {}),
         )
         .call()
     )
 
     report_template_input = (
-        get_file_path.validate()
+        fetch_and_persist_file.validate()
         .set_task_instance_id("report_template_input")
         .handle_errors()
         .with_tracing()
         .partial(
+            url="https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/bahari_hai_village_games_report_template.docx",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
+            unzip=False,
             **(params_dict.get("report_template_input") or {}),
         )
         .call()

@@ -4,9 +4,9 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, conint
 
 
 class WorkflowDetails(BaseModel):
@@ -17,21 +17,67 @@ class WorkflowDetails(BaseModel):
     description: Optional[str] = Field("", title="Workflow Description")
 
 
+class CsvInput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    retries: Optional[conint(ge=0)] = Field(
+        3, description="Number of retries on failure", title="Retries"
+    )
+    overwrite_existing: Optional[bool] = Field(
+        False,
+        description="Whether to overwrite existing files",
+        title="Overwrite Existing",
+    )
+
+
+class IconsInput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    retries: Optional[conint(ge=0)] = Field(
+        3, description="Number of retries on failure", title="Retries"
+    )
+    overwrite_existing: Optional[bool] = Field(
+        False,
+        description="Whether to overwrite existing files",
+        title="Overwrite Existing",
+    )
+
+
+class MarineLayersInput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    retries: Optional[conint(ge=0)] = Field(
+        3, description="Number of retries on failure", title="Retries"
+    )
+    overwrite_existing: Optional[bool] = Field(
+        False,
+        description="Whether to overwrite existing files",
+        title="Overwrite Existing",
+    )
+
+
+class ReportTemplateInput(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+    )
+    retries: Optional[conint(ge=0)] = Field(
+        3, description="Number of retries on failure", title="Retries"
+    )
+    overwrite_existing: Optional[bool] = Field(
+        False,
+        description="Whether to overwrite existing files",
+        title="Overwrite Existing",
+    )
+
+
 class TimezoneInfo(BaseModel):
     label: str = Field(..., title="Label")
     tzCode: str = Field(..., title="Tzcode")
     name: str = Field(..., title="Name")
     utc: str = Field(..., title="Utc")
-
-
-class DownloadFile(BaseModel):
-    url: str = Field(..., description="URL to download a file", title="URL")
-
-
-class LocalFile(BaseModel):
-    file_path: str = Field(
-        ..., description="Path to a local file", title="Local file path"
-    )
 
 
 class TimeRange(BaseModel):
@@ -46,34 +92,6 @@ class TimeRange(BaseModel):
     )
 
 
-class CsvInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    input_method: Union[DownloadFile, LocalFile] = Field(..., title="Input Method")
-
-
-class IconsInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    input_method: Union[DownloadFile, LocalFile] = Field(..., title="Input Method")
-
-
-class MarineLayersInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    input_method: Union[DownloadFile, LocalFile] = Field(..., title="Input Method")
-
-
-class ReportTemplateInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    input_method: Union[DownloadFile, LocalFile] = Field(..., title="Input Method")
-
-
 class Params(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
@@ -86,7 +104,7 @@ class Params(BaseModel):
     time_range: Optional[TimeRange] = Field(
         None, description="Choose the period of time to analyze.", title="Time Range"
     )
-    csv_input: Optional[CsvInput] = Field(None, title="CSV input from CSV")
+    csv_input: Optional[CsvInput] = Field(None, title="CSV input")
     icons_input: Optional[IconsInput] = Field(None, title="Icons directory")
     marine_layers_input: Optional[MarineLayersInput] = Field(
         None, title="Marine layers path"
