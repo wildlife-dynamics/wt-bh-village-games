@@ -63,84 +63,84 @@
     "csv_input": {
       "additionalProperties": false,
       "properties": {
-        "input_method": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DownloadFile"
-            },
-            {
-              "$ref": "#/$defs/LocalFile"
-            }
-          ],
-          "title": "Input Method"
+        "retries": {
+          "default": 3,
+          "minimum": 0,
+          "title": "Retries",
+          "type": "integer",
+          "description": "Number of retries on failure"
+        },
+        "overwrite_existing": {
+          "default": false,
+          "title": "Overwrite Existing",
+          "type": "boolean",
+          "description": "Whether to overwrite existing files"
         }
       },
-      "required": [
-        "input_method"
-      ],
+      "required": [],
       "type": "object",
-      "title": "CSV input from CSV"
+      "title": "CSV input"
     },
     "icons_input": {
       "additionalProperties": false,
       "properties": {
-        "input_method": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DownloadFile"
-            },
-            {
-              "$ref": "#/$defs/LocalFile"
-            }
-          ],
-          "title": "Input Method"
+        "retries": {
+          "default": 3,
+          "minimum": 0,
+          "title": "Retries",
+          "type": "integer",
+          "description": "Number of retries on failure"
+        },
+        "overwrite_existing": {
+          "default": false,
+          "title": "Overwrite Existing",
+          "type": "boolean",
+          "description": "Whether to overwrite existing files"
         }
       },
-      "required": [
-        "input_method"
-      ],
+      "required": [],
       "type": "object",
       "title": "Icons directory"
     },
     "marine_layers_input": {
       "additionalProperties": false,
       "properties": {
-        "input_method": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DownloadFile"
-            },
-            {
-              "$ref": "#/$defs/LocalFile"
-            }
-          ],
-          "title": "Input Method"
+        "retries": {
+          "default": 3,
+          "minimum": 0,
+          "title": "Retries",
+          "type": "integer",
+          "description": "Number of retries on failure"
+        },
+        "overwrite_existing": {
+          "default": false,
+          "title": "Overwrite Existing",
+          "type": "boolean",
+          "description": "Whether to overwrite existing files"
         }
       },
-      "required": [
-        "input_method"
-      ],
+      "required": [],
       "type": "object",
       "title": "Marine layers path"
     },
     "report_template_input": {
       "additionalProperties": false,
       "properties": {
-        "input_method": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/DownloadFile"
-            },
-            {
-              "$ref": "#/$defs/LocalFile"
-            }
-          ],
-          "title": "Input Method"
+        "retries": {
+          "default": 3,
+          "minimum": 0,
+          "title": "Retries",
+          "type": "integer",
+          "description": "Number of retries on failure"
+        },
+        "overwrite_existing": {
+          "default": false,
+          "title": "Overwrite Existing",
+          "type": "boolean",
+          "description": "Whether to overwrite existing files"
         }
       },
-      "required": [
-        "input_method"
-      ],
+      "required": [],
       "type": "object",
       "title": "Report template"
     }
@@ -173,34 +173,6 @@
       ],
       "title": "TimezoneInfo",
       "type": "object"
-    },
-    "DownloadFile": {
-      "properties": {
-        "url": {
-          "description": "URL to download a file",
-          "title": "URL",
-          "type": "string"
-        }
-      },
-      "required": [
-        "url"
-      ],
-      "title": "Download from URL",
-      "type": "object"
-    },
-    "LocalFile": {
-      "properties": {
-        "file_path": {
-          "description": "Path to a local file",
-          "title": "Local file path",
-          "type": "string"
-        }
-      },
-      "required": [
-        "file_path"
-      ],
-      "title": "Use local file",
-      "type": "object"
     }
   },
   "uiSchema": {
@@ -216,6 +188,30 @@
         "until",
         "timezone",
         "time_format"
+      ]
+    },
+    "csv_input": {
+      "ui:order": [
+        "retries",
+        "overwrite_existing"
+      ]
+    },
+    "icons_input": {
+      "ui:order": [
+        "retries",
+        "overwrite_existing"
+      ]
+    },
+    "marine_layers_input": {
+      "ui:order": [
+        "retries",
+        "overwrite_existing"
+      ]
+    },
+    "report_template_input": {
+      "ui:order": [
+        "retries",
+        "overwrite_existing"
       ]
     },
     "ui:order": [
