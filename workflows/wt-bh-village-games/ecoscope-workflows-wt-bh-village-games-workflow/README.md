@@ -31,7 +31,7 @@ installed_requirements:
   version: {version: ==2.3.3}
 - channel: conda-forge
   name: pandera
-  version: {version: ==0.30.1}
+  version: {version: ==0.31.1}
 - channel: conda-forge
   name: geopandas
   version: {version: ==1.1.3}
@@ -40,7 +40,7 @@ installed_requirements:
   version: {version: ==0.17.0}
 - channel: conda-forge
   name: matplotlib
-  version: {version: ==3.10.8}
+  version: {version: ==3.10.9}
 - channel: conda-forge
   name: plotly
   version: {version: ==6.6.0}
