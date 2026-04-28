@@ -1320,7 +1320,13 @@ def render_vg_report(
 
     tpl.render(context)
 
+    from urllib.parse import urlparse
+    from urllib.request import url2pathname
+
+    if output_path.startswith("file:"):
+        output_path = url2pathname(urlparse(output_path).path)
     out_dir = _Path(output_path)
+
     out_dir.mkdir(parents=True, exist_ok=True)
     out_file = out_dir / f"village_games_report_{report_year}.docx"
     tpl.save(str(out_file))

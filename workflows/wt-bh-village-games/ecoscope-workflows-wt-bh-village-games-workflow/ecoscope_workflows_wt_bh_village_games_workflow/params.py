@@ -6,7 +6,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, conint
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class WorkflowDetails(BaseModel):
@@ -15,62 +15,6 @@ class WorkflowDetails(BaseModel):
     )
     name: str = Field(..., title="Workflow Name")
     description: Optional[str] = Field("", title="Workflow Description")
-
-
-class CsvInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    retries: Optional[conint(ge=0)] = Field(
-        3, description="Number of retries on failure", title="Retries"
-    )
-    overwrite_existing: Optional[bool] = Field(
-        False,
-        description="Whether to overwrite existing files",
-        title="Overwrite Existing",
-    )
-
-
-class IconsInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    retries: Optional[conint(ge=0)] = Field(
-        3, description="Number of retries on failure", title="Retries"
-    )
-    overwrite_existing: Optional[bool] = Field(
-        False,
-        description="Whether to overwrite existing files",
-        title="Overwrite Existing",
-    )
-
-
-class MarineLayersInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    retries: Optional[conint(ge=0)] = Field(
-        3, description="Number of retries on failure", title="Retries"
-    )
-    overwrite_existing: Optional[bool] = Field(
-        False,
-        description="Whether to overwrite existing files",
-        title="Overwrite Existing",
-    )
-
-
-class ReportTemplateInput(BaseModel):
-    model_config = ConfigDict(
-        extra="forbid",
-    )
-    retries: Optional[conint(ge=0)] = Field(
-        3, description="Number of retries on failure", title="Retries"
-    )
-    overwrite_existing: Optional[bool] = Field(
-        False,
-        description="Whether to overwrite existing files",
-        title="Overwrite Existing",
-    )
 
 
 class TimezoneInfo(BaseModel):
@@ -103,12 +47,4 @@ class Params(BaseModel):
     )
     time_range: Optional[TimeRange] = Field(
         None, description="Choose the period of time to analyze.", title="Time Range"
-    )
-    csv_input: Optional[CsvInput] = Field(None, title="CSV input")
-    icons_input: Optional[IconsInput] = Field(None, title="Icons directory")
-    marine_layers_input: Optional[MarineLayersInput] = Field(
-        None, title="Marine layers path"
-    )
-    report_template_input: Optional[ReportTemplateInput] = Field(
-        None, title="Report template"
     )

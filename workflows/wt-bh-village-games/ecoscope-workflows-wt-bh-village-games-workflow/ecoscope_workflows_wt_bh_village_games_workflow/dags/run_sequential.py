@@ -98,6 +98,8 @@ def main(params: Params):
             url="https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/patrol_findings_with_village.csv",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             unzip=False,
+            retries=3,
+            overwrite_existing=False,
             **(params_dict.get("csv_input") or {}),
         )
         .call()
@@ -126,6 +128,8 @@ def main(params: Params):
             url="https://drive.google.com/uc?export=download&id=1jwJiY4Uayu2RNQ2Hq411ba-M6112OKTC",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             unzip=True,
+            retries=3,
+            overwrite_existing=False,
             **(params_dict.get("icons_input") or {}),
         )
         .call()
@@ -140,6 +144,8 @@ def main(params: Params):
             url="https://drive.google.com/uc?export=download&id=1pNu0xS9lMN-O4SPpSiBihYcUTOGwN5_H",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             unzip=True,
+            retries=3,
+            overwrite_existing=False,
             **(params_dict.get("marine_layers_input") or {}),
         )
         .call()
@@ -154,6 +160,8 @@ def main(params: Params):
             url="https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/bahari_hai_village_games_report_template.docx",
             output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
             unzip=False,
+            retries=3,
+            overwrite_existing=False,
             **(params_dict.get("report_template_input") or {}),
         )
         .call()

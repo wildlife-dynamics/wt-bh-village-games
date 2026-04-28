@@ -5,8 +5,8 @@
 
 ```yaml
 # fingerprint:
-artifacts_sha256_basic: 5478a86efc98464005ad3f4480875c04639857364d05aa4e0ae1808491eab0bd
-artifacts_sha256_strict: 4a42525123c03ea23a651b98ffa8c49751d8d47a0bfbba3fb68ab1dc8ec53003
+artifacts_sha256_basic: 04e722f5ffdca627289321385a6c3912cea41b756be152ff04830cb3dfff531c
+artifacts_sha256_strict: c95568410eaa785fa791684b4178e8e7ae38ddfea5fffcab1510ed2fe571c1da
 installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows/
   name: ecoscope-workflows-core
@@ -22,7 +22,7 @@ installed_requirements:
   version: {version: ==0.0.16}
 - channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   name: ecoscope-workflows-ext-bh-village-games
-  version: {version: ==0.0.3}
+  version: {version: ==0.0.4}
 - channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   name: ecoscope-workflows-ext-ste
   version: {version: ==0.0.18}
@@ -31,7 +31,7 @@ installed_requirements:
   version: {version: ==2.3.3}
 - channel: conda-forge
   name: pandera
-  version: {version: ==0.30.1}
+  version: {version: ==0.31.1}
 - channel: conda-forge
   name: geopandas
   version: {version: ==1.1.3}
@@ -40,15 +40,15 @@ installed_requirements:
   version: {version: ==0.17.0}
 - channel: conda-forge
   name: matplotlib
-  version: {version: ==3.10.8}
+  version: {version: ==3.10.9}
 - channel: conda-forge
   name: plotly
   version: {version: ==6.6.0}
 - channel: conda-forge
   name: fiona
   version: {version: ==1.10.1}
-params_sha256: 98a90b3306c19ce2eaad8eb17dd9ae4f63b53ee574708353efbef92fd4a3598c
-spec_sha256: 21297af0f1f5e1b9fa63d45b426fcdc2c0cdf7535404a36bd5f58019538bff83
+params_sha256: 8603354ebb298fcfeee5186981ad4a7eabf4f01f402c2a19929a3d27f43443d4
+spec_sha256: 3d1a7b3f20c015e839734d6dd1103399de6e80a3c23a7d3db57f827e4ac7f8d2
 
 ```
 

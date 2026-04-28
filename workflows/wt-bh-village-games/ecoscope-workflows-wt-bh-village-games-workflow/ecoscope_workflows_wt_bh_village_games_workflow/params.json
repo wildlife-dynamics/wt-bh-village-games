@@ -59,90 +59,6 @@
       "type": "object",
       "description": "Choose the period of time to analyze.",
       "title": "Time Range"
-    },
-    "csv_input": {
-      "additionalProperties": false,
-      "properties": {
-        "retries": {
-          "default": 3,
-          "minimum": 0,
-          "title": "Retries",
-          "type": "integer",
-          "description": "Number of retries on failure"
-        },
-        "overwrite_existing": {
-          "default": false,
-          "title": "Overwrite Existing",
-          "type": "boolean",
-          "description": "Whether to overwrite existing files"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "CSV input"
-    },
-    "icons_input": {
-      "additionalProperties": false,
-      "properties": {
-        "retries": {
-          "default": 3,
-          "minimum": 0,
-          "title": "Retries",
-          "type": "integer",
-          "description": "Number of retries on failure"
-        },
-        "overwrite_existing": {
-          "default": false,
-          "title": "Overwrite Existing",
-          "type": "boolean",
-          "description": "Whether to overwrite existing files"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "Icons directory"
-    },
-    "marine_layers_input": {
-      "additionalProperties": false,
-      "properties": {
-        "retries": {
-          "default": 3,
-          "minimum": 0,
-          "title": "Retries",
-          "type": "integer",
-          "description": "Number of retries on failure"
-        },
-        "overwrite_existing": {
-          "default": false,
-          "title": "Overwrite Existing",
-          "type": "boolean",
-          "description": "Whether to overwrite existing files"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "Marine layers path"
-    },
-    "report_template_input": {
-      "additionalProperties": false,
-      "properties": {
-        "retries": {
-          "default": 3,
-          "minimum": 0,
-          "title": "Retries",
-          "type": "integer",
-          "description": "Number of retries on failure"
-        },
-        "overwrite_existing": {
-          "default": false,
-          "title": "Overwrite Existing",
-          "type": "boolean",
-          "description": "Whether to overwrite existing files"
-        }
-      },
-      "required": [],
-      "type": "object",
-      "title": "Report template"
     }
   },
   "$defs": {
@@ -190,37 +106,9 @@
         "time_format"
       ]
     },
-    "csv_input": {
-      "ui:order": [
-        "retries",
-        "overwrite_existing"
-      ]
-    },
-    "icons_input": {
-      "ui:order": [
-        "retries",
-        "overwrite_existing"
-      ]
-    },
-    "marine_layers_input": {
-      "ui:order": [
-        "retries",
-        "overwrite_existing"
-      ]
-    },
-    "report_template_input": {
-      "ui:order": [
-        "retries",
-        "overwrite_existing"
-      ]
-    },
     "ui:order": [
       "workflow_details",
-      "time_range",
-      "csv_input",
-      "icons_input",
-      "marine_layers_input",
-      "report_template_input"
+      "time_range"
     ]
   },
   "additionalProperties": false
