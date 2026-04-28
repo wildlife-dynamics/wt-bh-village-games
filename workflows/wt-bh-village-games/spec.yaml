@@ -60,13 +60,16 @@ workflow:
     id: time_range
     task: set_time_range
 
-  # ── Inputs ────────────────────────────────────────────────
-  - name: CSV input from CSV
+    # ── CSV ────────────────────────────────────────────────
+  - name: CSV input
     id: csv_input
-    task: get_file_path
+    task: fetch_and_persist_file
     partial:
+      url: https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/patrol_findings_with_village.csv
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      unzip: false
 
+  # ── Load data ──────────────────────────────────────────
   - name: Load data
     id: load_data
     task: load_df
@@ -75,24 +78,33 @@ workflow:
       layer: landDx_polygons
       deserialize_json: false
 
+  # ── Icons (ZIP → must extract) ─────────────────────────
   - name: Icons directory
     id: icons_input
-    task: get_file_path
+    task: fetch_and_persist_file
     partial:
+      url: https://drive.google.com/uc?export=download&id=1jwJiY4Uayu2RNQ2Hq411ba-M6112OKTC
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      unzip: true
 
+  # ── Marine layers (ZIP → must extract) ────────────────
   - name: Marine layers path
     id: marine_layers_input
-    task: get_file_path
+    task: fetch_and_persist_file
     partial:
+      url: https://drive.google.com/uc?export=download&id=1pNu0xS9lMN-O4SPpSiBihYcUTOGwN5_H
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
+      unzip: true
 
+  # ── Report template (DOCX) ─────────────────────────────
   - name: Report template
     id: report_template_input
-    task: get_file_path
+    task: fetch_and_persist_file
     partial:
+      url: https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/bahari_hai_village_games_report_template.docx
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-
+      unzip: false
+      
   # ── Clean data ────────────────────────────────────────────
   - name: Clean patrol data
     id: clean_data
