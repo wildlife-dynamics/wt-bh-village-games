@@ -2,7 +2,7 @@
 # Bahari Hai — Village Games param.yaml
 # ══════════════════════════════════════════════════════════════════════════════
 
-wf_details:
+workflow_details:
   name: "wt_bh_village_games"
 
 time_range:
@@ -15,10 +15,10 @@ time_range:
   since: '2024-01-01T00:00:00.000Z'
   until: '2024-12-31T23:59:00.000Z'
 
-# CSV patrol data
-csv_input:
-  input_method:
-    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/patrol_findings_with_village.csv"
+# # CSV patrol data
+# csv_input:
+#   input_method:
+#     file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/patrol_findings_with_village.csv"
 
 # Icons directory — should contain:
 #   green_thumb.png, red_thumb.png       (feedback tables)
@@ -26,19 +26,19 @@ csv_input:
 #   turtle_poaching.png, mangrove_logging.png,
 #   illegal_fishing.png, arrests.png,
 #   poached_turtle_sum.png               (icon bars)
-icons_input:
-  input_method:
-    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/icons"
+# icons_input:
+#   input_method:
+#     file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/icons"
 
-# Marine layers for ecomaps
-marine_layers_input:
-  input_method:
-    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/marine_layers"
+# # Marine layers for ecomaps
+# marine_layers_input:
+#   input_method:
+#     file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/marine_layers"
 
-# Report template (Word .docx)
-report_template_input:
-  input_method:
-    file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/BH_REPORTS/bahari_hai_village_games_report_template.docx"
+# # Report template (Word .docx)
+# report_template_input:
+#   input_method:
+#     file_path: "/mnt/d/pgaff/ecoscope-pgaff/BAHARI_HAI/BH_REPORTS/bahari_hai_village_games_report_template.docx"
 
 # Groupers — users can change these in the desktop UI
 # Yearly grouper drives community feedback tables, heatmaps, donuts, and maps
