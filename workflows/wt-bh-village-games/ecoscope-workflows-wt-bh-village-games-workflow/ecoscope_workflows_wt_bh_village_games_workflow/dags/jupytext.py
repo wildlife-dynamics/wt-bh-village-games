@@ -132,10 +132,7 @@ time_range = (
 # %%
 # parameters
 
-csv_input_params = dict(
-    retries=...,
-    overwrite_existing=...,
-)
+csv_input_params = dict()
 
 # %%
 # call the task
@@ -149,6 +146,8 @@ csv_input = (
         url="https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/patrol_findings_with_village.csv",
         output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
         unzip=False,
+        retries=3,
+        overwrite_existing=False,
         **csv_input_params,
     )
     .call()
@@ -187,10 +186,7 @@ load_data = (
 # %%
 # parameters
 
-icons_input_params = dict(
-    retries=...,
-    overwrite_existing=...,
-)
+icons_input_params = dict()
 
 # %%
 # call the task
@@ -204,6 +200,8 @@ icons_input = (
         url="https://drive.google.com/uc?export=download&id=1jwJiY4Uayu2RNQ2Hq411ba-M6112OKTC",
         output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
         unzip=True,
+        retries=3,
+        overwrite_existing=False,
         **icons_input_params,
     )
     .call()
@@ -216,10 +214,7 @@ icons_input = (
 # %%
 # parameters
 
-marine_layers_input_params = dict(
-    retries=...,
-    overwrite_existing=...,
-)
+marine_layers_input_params = dict()
 
 # %%
 # call the task
@@ -233,6 +228,8 @@ marine_layers_input = (
         url="https://drive.google.com/uc?export=download&id=1pNu0xS9lMN-O4SPpSiBihYcUTOGwN5_H",
         output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
         unzip=True,
+        retries=3,
+        overwrite_existing=False,
         **marine_layers_input_params,
     )
     .call()
@@ -245,10 +242,7 @@ marine_layers_input = (
 # %%
 # parameters
 
-report_template_input_params = dict(
-    retries=...,
-    overwrite_existing=...,
-)
+report_template_input_params = dict()
 
 # %%
 # call the task
@@ -262,6 +256,8 @@ report_template_input = (
         url="https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/bahari_hai_village_games_report_template.docx",
         output_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
         unzip=False,
+        retries=3,
+        overwrite_existing=False,
         **report_template_input_params,
     )
     .call()

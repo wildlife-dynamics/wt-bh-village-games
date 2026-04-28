@@ -11,10 +11,10 @@ requirements:
     version: "0.0.28.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-bahari-hai
-    version: "==0.0.16"
+    version: "==0.0.17"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-bh-village-games
-    version: "0.0.3"
+    version: "0.0.4.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-ste
     version: "0.0.18.*"
@@ -68,6 +68,8 @@ workflow:
       url: https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/patrol_findings_with_village.csv
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
       unzip: false
+      retries: 3
+      overwrite_existing: false
 
   # ── Load data ──────────────────────────────────────────
   - name: Load data
@@ -86,6 +88,8 @@ workflow:
       url: https://drive.google.com/uc?export=download&id=1jwJiY4Uayu2RNQ2Hq411ba-M6112OKTC
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
       unzip: true
+      retries: 3
+      overwrite_existing: false
 
   # ── Marine layers (ZIP → must extract) ────────────────
   - name: Marine layers path
@@ -95,6 +99,9 @@ workflow:
       url: https://drive.google.com/uc?export=download&id=1pNu0xS9lMN-O4SPpSiBihYcUTOGwN5_H
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
       unzip: true
+      retries: 3
+      overwrite_existing: false
+
 
   # ── Report template (DOCX) ─────────────────────────────
   - name: Report template
@@ -104,7 +111,9 @@ workflow:
       url: https://raw.githubusercontent.com/wildlife-dynamics/wt-bh-village-games/ae1f5bfb247c0bdde169caaaaf4e5c96cafb6b75/data/bahari_hai_village_games_report_template.docx
       output_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
       unzip: false
-      
+      retries: 3
+      overwrite_existing: false
+
   # ── Clean data ────────────────────────────────────────────
   - name: Clean patrol data
     id: clean_data
