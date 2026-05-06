@@ -5,8 +5,8 @@
 
 ```yaml
 # fingerprint:
-artifacts_sha256_basic: 04e722f5ffdca627289321385a6c3912cea41b756be152ff04830cb3dfff531c
-artifacts_sha256_strict: c95568410eaa785fa791684b4178e8e7ae38ddfea5fffcab1510ed2fe571c1da
+artifacts_sha256_basic: 6164cc2ae747ae8e3d7a90eda3a54aced64bcf410ce19abe651b5bc5ffb5b576
+artifacts_sha256_strict: 315a017fd053ca93d7f2fb7d23aff38cf6d2606b48bd10f548e3981f8d5edec0
 installed_requirements:
 - channel: https://repo.prefix.dev/ecoscope-workflows/
   name: ecoscope-workflows-core
@@ -19,10 +19,10 @@ installed_requirements:
   version: {version: ==0.0.28}
 - channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   name: ecoscope-workflows-ext-bahari-hai
-  version: {version: ==0.0.16}
-- channel: https://repo.prefix.dev/ecoscope-workflows-custom/
+  version: {version: ==0.0.21}
+- channel: file:///tmp/ecoscope-workflows-custom/release/artifacts/
   name: ecoscope-workflows-ext-bh-village-games
-  version: {version: ==0.0.4}
+  version: {version: ==0.0.4.dev10+g3891f2b45.d20260506}
 - channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   name: ecoscope-workflows-ext-ste
   version: {version: ==0.0.18}
@@ -48,7 +48,7 @@ installed_requirements:
   name: fiona
   version: {version: ==1.10.1}
 params_sha256: 8603354ebb298fcfeee5186981ad4a7eabf4f01f402c2a19929a3d27f43443d4
-spec_sha256: 3d1a7b3f20c015e839734d6dd1103399de6e80a3c23a7d3db57f827e4ac7f8d2
+spec_sha256: f5f742b4f2abcf6ecfe06053a7a27597b1cd203033d429dcd57292fbf49ecf8f
 
 ```
 

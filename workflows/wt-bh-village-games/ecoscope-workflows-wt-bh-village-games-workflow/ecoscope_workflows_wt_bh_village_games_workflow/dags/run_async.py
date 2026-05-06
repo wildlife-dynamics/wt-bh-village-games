@@ -58,6 +58,9 @@ from ecoscope_workflows_ext_bh_village_games.tasks import (
     draw_village_icon_bar as draw_village_icon_bar,
 )
 from ecoscope_workflows_ext_bh_village_games.tasks import (
+    rekey_widget_by_year as rekey_widget_by_year,
+)
+from ecoscope_workflows_ext_bh_village_games.tasks import (
     render_vg_report as render_vg_report,
 )
 from ecoscope_workflows_ext_custom.tasks.io import html_to_png as html_to_png
@@ -285,16 +288,16 @@ def main(params: Params):
             "png_lb_arrests",
             "png_ibar_v01",
             "png_ibar_v02",
-            "png_ibar_v03",
-            "png_ibar_v04",
-            "png_ibar_v05",
             "png_ibar_v06",
-            "png_ibar_v07",
+            "png_ibar_v12",
+            "png_ibar_v13",
+            "png_ibar_v10",
             "png_ibar_v08",
             "png_ibar_v09",
-            "png_ibar_v10",
-            "png_ibar_v11",
-            "png_ibar_v12",
+            "png_ibar_v07",
+            "png_ibar_v05",
+            "png_ibar_v04",
+            "png_ibar_v03",
             "png_all_villages_bar",
             "png_ie_map",
             "png_poaching_map",
@@ -302,7 +305,25 @@ def main(params: Params):
             "png_illegal_fishing_map",
             "png_arrests_map",
         ],
-        "grouped_yearly": [
+        "rk_lb_poaching": ["widget_lb_poaching"],
+        "rk_lb_mangrove": ["widget_lb_mangrove"],
+        "rk_lb_fishing": ["widget_lb_fishing"],
+        "rk_lb_arrests": ["widget_lb_arrests"],
+        "rk_ibar_v01": ["widget_ibar_v01"],
+        "rk_ibar_v02": ["widget_ibar_v02"],
+        "rk_ibar_v03": ["widget_ibar_v03"],
+        "rk_ibar_v04": ["widget_ibar_v04"],
+        "rk_ibar_v05": ["widget_ibar_v05"],
+        "rk_ibar_v06": ["widget_ibar_v06"],
+        "rk_ibar_v07": ["widget_ibar_v07"],
+        "rk_ibar_v08": ["widget_ibar_v08"],
+        "rk_ibar_v09": ["widget_ibar_v09"],
+        "rk_ibar_v10": ["widget_ibar_v10"],
+        "rk_ibar_v11": ["widget_ibar_v11"],
+        "rk_ibar_v12": ["widget_ibar_v12"],
+        "rk_ibar_v13": ["widget_ibar_v13"],
+        "rk_all_villages_bar": ["widget_all_villages_bar"],
+        "grouped_widgets": [
             "widget_tbl_poaching",
             "widget_tbl_mangrove",
             "widget_tbl_fishing",
@@ -327,28 +348,26 @@ def main(params: Params):
             "widget_mangrove_map",
             "widget_illegal_fishing_map",
             "widget_arrests_map",
+            "rk_lb_poaching",
+            "rk_lb_mangrove",
+            "rk_lb_fishing",
+            "rk_lb_arrests",
+            "rk_ibar_v01",
+            "rk_ibar_v02",
+            "rk_ibar_v03",
+            "rk_ibar_v04",
+            "rk_ibar_v05",
+            "rk_ibar_v06",
+            "rk_ibar_v07",
+            "rk_ibar_v08",
+            "rk_ibar_v09",
+            "rk_ibar_v10",
+            "rk_ibar_v11",
+            "rk_ibar_v12",
+            "rk_ibar_v13",
+            "rk_all_villages_bar",
         ],
-        "grouped_quarterly": [
-            "widget_lb_poaching",
-            "widget_lb_mangrove",
-            "widget_lb_fishing",
-            "widget_lb_arrests",
-            "widget_ibar_v01",
-            "widget_ibar_v02",
-            "widget_ibar_v03",
-            "widget_ibar_v04",
-            "widget_ibar_v05",
-            "widget_ibar_v06",
-            "widget_ibar_v07",
-            "widget_ibar_v08",
-            "widget_ibar_v09",
-            "widget_ibar_v10",
-            "widget_ibar_v11",
-            "widget_ibar_v12",
-            "widget_ibar_v13",
-            "widget_all_villages_bar",
-        ],
-        "dashboard_widgets": ["grouped_yearly"],
+        "dashboard_widgets": ["grouped_widgets"],
         "vg_dashboard": [
             "workflow_details",
             "yearly_groupers",
@@ -2451,7 +2470,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Magangani to Mida",
+                "village": "Jacaranda to Kanani",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -2471,7 +2490,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_magangani_mida",
+                "filename_suffix": "ibar_jacaranda_kanani",
             }
             | (params_dict.get("persist_ibar_v03") or {}),
             method="mapvalues",
@@ -2510,7 +2529,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Magangani to Mida",
+                "title": "Icon Bar: Jacaranda to Kanani",
             }
             | (params_dict.get("widget_ibar_v03") or {}),
             method="mapvalues",
@@ -2527,7 +2546,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Uyombo to Kivunjeni",
+                "village": "Kanani to Darakasi",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -2547,7 +2566,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_uyombo_kivunjeni",
+                "filename_suffix": "ibar_kanani_darakasi",
             }
             | (params_dict.get("persist_ibar_v04") or {}),
             method="mapvalues",
@@ -2586,7 +2605,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Uyombo to Kivunjeni",
+                "title": "Icon Bar: Kanani to Darakasi",
             }
             | (params_dict.get("widget_ibar_v04") or {}),
             method="mapvalues",
@@ -2603,7 +2622,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Watamu to Dongokundu",
+                "village": "Kivunjeni to Wesa",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -2623,7 +2642,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_watamu_dongokundu",
+                "filename_suffix": "ibar_kivunjeni_wesa",
             }
             | (params_dict.get("persist_ibar_v05") or {}),
             method="mapvalues",
@@ -2662,7 +2681,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Watamu to Dongokundu",
+                "title": "Icon Bar: Kivunjeni to Wesa",
             }
             | (params_dict.get("widget_ibar_v05") or {}),
             method="mapvalues",
@@ -2679,7 +2698,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Mida to Marafiki",
+                "village": "Magangani to Mida",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -2699,7 +2718,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_mida_marafiki",
+                "filename_suffix": "ibar_magangani_mida",
             }
             | (params_dict.get("persist_ibar_v06") or {}),
             method="mapvalues",
@@ -2738,7 +2757,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Mida to Marafiki",
+                "title": "Icon Bar: Magangani to Mida",
             }
             | (params_dict.get("widget_ibar_v06") or {}),
             method="mapvalues",
@@ -2755,7 +2774,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Mawe Ya Kati to Jacaranda",
+                "village": "Marafiki to Uyombo",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -2775,7 +2794,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_mawe_jacaranda",
+                "filename_suffix": "ibar_marafiki_uyombo",
             }
             | (params_dict.get("persist_ibar_v07") or {}),
             method="mapvalues",
@@ -2814,7 +2833,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Mawe Ya Kati to Jacaranda",
+                "title": "Icon Bar: Marafiki to Uyombo",
             }
             | (params_dict.get("widget_ibar_v07") or {}),
             method="mapvalues",
@@ -2831,7 +2850,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Mid Mayungu to Mawe Ya Kati",
+                "village": "Mawe Ya Kati to Jacaranda",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -2851,7 +2870,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_mid_mayungu_mawe",
+                "filename_suffix": "ibar_mawe_jacaranda",
             }
             | (params_dict.get("persist_ibar_v08") or {}),
             method="mapvalues",
@@ -2890,7 +2909,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Mid Mayungu to Mawe Ya Kati",
+                "title": "Icon Bar: Mawe Ya Kati to Jacaranda",
             }
             | (params_dict.get("widget_ibar_v08") or {}),
             method="mapvalues",
@@ -2907,7 +2926,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Marafiki to Uyombo",
+                "village": "Mid Mayungu to Mawe Ya Kati",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -2927,7 +2946,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_marafiki_uyombo",
+                "filename_suffix": "ibar_mid_mayungu_mawe",
             }
             | (params_dict.get("persist_ibar_v09") or {}),
             method="mapvalues",
@@ -2966,7 +2985,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Marafiki to Uyombo",
+                "title": "Icon Bar: Mid Mayungu to Mawe Ya Kati",
             }
             | (params_dict.get("widget_ibar_v09") or {}),
             method="mapvalues",
@@ -2983,7 +3002,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Kivunjeni to Wesa",
+                "village": "Mida to Marafiki",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -3003,7 +3022,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_kivunjeni_wesa",
+                "filename_suffix": "ibar_mida_marafiki",
             }
             | (params_dict.get("persist_ibar_v10") or {}),
             method="mapvalues",
@@ -3042,7 +3061,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Kivunjeni to Wesa",
+                "title": "Icon Bar: Mida to Marafiki",
             }
             | (params_dict.get("widget_ibar_v10") or {}),
             method="mapvalues",
@@ -3059,7 +3078,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Kanani to Darakasi",
+                "village": "Sita to Magangani",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -3079,7 +3098,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_kanani_darakasi",
+                "filename_suffix": "ibar_sita_magangani",
             }
             | (params_dict.get("persist_ibar_v11") or {}),
             method="mapvalues",
@@ -3118,7 +3137,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Kanani to Darakasi",
+                "title": "Icon Bar: Sita to Magangani",
             }
             | (params_dict.get("widget_ibar_v11") or {}),
             method="mapvalues",
@@ -3135,7 +3154,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "df": DependsOn("clean_data"),
-                "village": "Jacaranda to Kanani",
+                "village": "Uyombo to Kivunjeni",
                 "icons_dir": DependsOn("icons_input"),
                 "village_column": "Village",
                 "icons_per_row": 8,
@@ -3155,7 +3174,7 @@ def main(params: Params):
             .set_executor("lithops"),
             partial={
                 "root_path": os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-                "filename_suffix": "ibar_jacaranda_kanani",
+                "filename_suffix": "ibar_uyombo_kivunjeni",
             }
             | (params_dict.get("persist_ibar_v12") or {}),
             method="mapvalues",
@@ -3194,7 +3213,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "title": "Icon Bar: Jacaranda to Kanani",
+                "title": "Icon Bar: Uyombo to Kivunjeni",
             }
             | (params_dict.get("widget_ibar_v12") or {}),
             method="mapvalues",
@@ -3795,16 +3814,16 @@ def main(params: Params):
                 "lb_arrests_png": DependsOn("png_lb_arrests"),
                 "ibar_darakasi_watamu_png": DependsOn("png_ibar_v01"),
                 "ibar_dongokundu_sita_png": DependsOn("png_ibar_v02"),
-                "ibar_magangani_mida_png": DependsOn("png_ibar_v03"),
-                "ibar_uyombo_kivunjeni_png": DependsOn("png_ibar_v04"),
-                "ibar_watamu_dongokundu_png": DependsOn("png_ibar_v05"),
-                "ibar_mida_marafiki_png": DependsOn("png_ibar_v06"),
-                "ibar_mawe_jacaranda_png": DependsOn("png_ibar_v07"),
-                "ibar_mid_mayungu_mawe_png": DependsOn("png_ibar_v08"),
-                "ibar_marafiki_uyombo_png": DependsOn("png_ibar_v09"),
-                "ibar_kivunjeni_wesa_png": DependsOn("png_ibar_v10"),
-                "ibar_kanani_darakasi_png": DependsOn("png_ibar_v11"),
-                "ibar_jacaranda_kanani_png": DependsOn("png_ibar_v12"),
+                "ibar_magangani_mida_png": DependsOn("png_ibar_v06"),
+                "ibar_uyombo_kivunjeni_png": DependsOn("png_ibar_v12"),
+                "ibar_watamu_dongokundu_png": DependsOn("png_ibar_v13"),
+                "ibar_mida_marafiki_png": DependsOn("png_ibar_v10"),
+                "ibar_mawe_jacaranda_png": DependsOn("png_ibar_v08"),
+                "ibar_mid_mayungu_mawe_png": DependsOn("png_ibar_v09"),
+                "ibar_marafiki_uyombo_png": DependsOn("png_ibar_v07"),
+                "ibar_kivunjeni_wesa_png": DependsOn("png_ibar_v05"),
+                "ibar_kanani_darakasi_png": DependsOn("png_ibar_v04"),
+                "ibar_jacaranda_kanani_png": DependsOn("png_ibar_v03"),
                 "all_villages_icon_bar_png": DependsOn("png_all_villages_bar"),
                 "illegal_events_map_png": DependsOn("png_ie_map"),
                 "poaching_map_png": DependsOn("png_poaching_map"),
@@ -3815,9 +3834,225 @@ def main(params: Params):
             | (params_dict.get("render_village_games_report") or {}),
             method="call",
         ),
-        "grouped_yearly": Node(
+        "rk_lb_poaching": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_lb_poaching")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_lb_poaching"),
+            }
+            | (params_dict.get("rk_lb_poaching") or {}),
+            method="call",
+        ),
+        "rk_lb_mangrove": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_lb_mangrove")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_lb_mangrove"),
+            }
+            | (params_dict.get("rk_lb_mangrove") or {}),
+            method="call",
+        ),
+        "rk_lb_fishing": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_lb_fishing")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_lb_fishing"),
+            }
+            | (params_dict.get("rk_lb_fishing") or {}),
+            method="call",
+        ),
+        "rk_lb_arrests": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_lb_arrests")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_lb_arrests"),
+            }
+            | (params_dict.get("rk_lb_arrests") or {}),
+            method="call",
+        ),
+        "rk_ibar_v01": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v01")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v01"),
+            }
+            | (params_dict.get("rk_ibar_v01") or {}),
+            method="call",
+        ),
+        "rk_ibar_v02": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v02")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v02"),
+            }
+            | (params_dict.get("rk_ibar_v02") or {}),
+            method="call",
+        ),
+        "rk_ibar_v03": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v03")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v03"),
+            }
+            | (params_dict.get("rk_ibar_v03") or {}),
+            method="call",
+        ),
+        "rk_ibar_v04": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v04")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v04"),
+            }
+            | (params_dict.get("rk_ibar_v04") or {}),
+            method="call",
+        ),
+        "rk_ibar_v05": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v05")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v05"),
+            }
+            | (params_dict.get("rk_ibar_v05") or {}),
+            method="call",
+        ),
+        "rk_ibar_v06": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v06")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v06"),
+            }
+            | (params_dict.get("rk_ibar_v06") or {}),
+            method="call",
+        ),
+        "rk_ibar_v07": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v07")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v07"),
+            }
+            | (params_dict.get("rk_ibar_v07") or {}),
+            method="call",
+        ),
+        "rk_ibar_v08": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v08")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v08"),
+            }
+            | (params_dict.get("rk_ibar_v08") or {}),
+            method="call",
+        ),
+        "rk_ibar_v09": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v09")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v09"),
+            }
+            | (params_dict.get("rk_ibar_v09") or {}),
+            method="call",
+        ),
+        "rk_ibar_v10": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v10")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v10"),
+            }
+            | (params_dict.get("rk_ibar_v10") or {}),
+            method="call",
+        ),
+        "rk_ibar_v11": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v11")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v11"),
+            }
+            | (params_dict.get("rk_ibar_v11") or {}),
+            method="call",
+        ),
+        "rk_ibar_v12": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v12")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v12"),
+            }
+            | (params_dict.get("rk_ibar_v12") or {}),
+            method="call",
+        ),
+        "rk_ibar_v13": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_ibar_v13")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_ibar_v13"),
+            }
+            | (params_dict.get("rk_ibar_v13") or {}),
+            method="call",
+        ),
+        "rk_all_villages_bar": Node(
+            async_task=rekey_widget_by_year.validate()
+            .set_task_instance_id("rk_all_villages_bar")
+            .handle_errors()
+            .with_tracing()
+            .set_executor("lithops"),
+            partial={
+                "widget": DependsOn("widget_all_villages_bar"),
+            }
+            | (params_dict.get("rk_all_villages_bar") or {}),
+            method="call",
+        ),
+        "grouped_widgets": Node(
             async_task=groupbykey.validate()
-            .set_task_instance_id("grouped_yearly")
+            .set_task_instance_id("grouped_widgets")
             .handle_errors()
             .with_tracing()
             .set_executor("lithops"),
@@ -3847,40 +4082,27 @@ def main(params: Params):
                     DependsOn("widget_mangrove_map"),
                     DependsOn("widget_illegal_fishing_map"),
                     DependsOn("widget_arrests_map"),
+                    DependsOn("rk_lb_poaching"),
+                    DependsOn("rk_lb_mangrove"),
+                    DependsOn("rk_lb_fishing"),
+                    DependsOn("rk_lb_arrests"),
+                    DependsOn("rk_ibar_v01"),
+                    DependsOn("rk_ibar_v02"),
+                    DependsOn("rk_ibar_v03"),
+                    DependsOn("rk_ibar_v04"),
+                    DependsOn("rk_ibar_v05"),
+                    DependsOn("rk_ibar_v06"),
+                    DependsOn("rk_ibar_v07"),
+                    DependsOn("rk_ibar_v08"),
+                    DependsOn("rk_ibar_v09"),
+                    DependsOn("rk_ibar_v10"),
+                    DependsOn("rk_ibar_v11"),
+                    DependsOn("rk_ibar_v12"),
+                    DependsOn("rk_ibar_v13"),
+                    DependsOn("rk_all_villages_bar"),
                 ],
             }
-            | (params_dict.get("grouped_yearly") or {}),
-            method="call",
-        ),
-        "grouped_quarterly": Node(
-            async_task=groupbykey.validate()
-            .set_task_instance_id("grouped_quarterly")
-            .handle_errors()
-            .with_tracing()
-            .set_executor("lithops"),
-            partial={
-                "iterables": [
-                    DependsOn("widget_lb_poaching"),
-                    DependsOn("widget_lb_mangrove"),
-                    DependsOn("widget_lb_fishing"),
-                    DependsOn("widget_lb_arrests"),
-                    DependsOn("widget_ibar_v01"),
-                    DependsOn("widget_ibar_v02"),
-                    DependsOn("widget_ibar_v03"),
-                    DependsOn("widget_ibar_v04"),
-                    DependsOn("widget_ibar_v05"),
-                    DependsOn("widget_ibar_v06"),
-                    DependsOn("widget_ibar_v07"),
-                    DependsOn("widget_ibar_v08"),
-                    DependsOn("widget_ibar_v09"),
-                    DependsOn("widget_ibar_v10"),
-                    DependsOn("widget_ibar_v11"),
-                    DependsOn("widget_ibar_v12"),
-                    DependsOn("widget_ibar_v13"),
-                    DependsOn("widget_all_villages_bar"),
-                ],
-            }
-            | (params_dict.get("grouped_quarterly") or {}),
+            | (params_dict.get("grouped_widgets") or {}),
             method="call",
         ),
         "dashboard_widgets": Node(
@@ -3890,7 +4112,7 @@ def main(params: Params):
             .with_tracing()
             .set_executor("lithops"),
             partial={
-                "keyed_widgets": DependsOn("grouped_yearly"),
+                "keyed_widgets": DependsOn("grouped_widgets"),
             }
             | (params_dict.get("dashboard_widgets") or {}),
             method="call",
