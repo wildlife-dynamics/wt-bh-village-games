@@ -11,11 +11,11 @@ requirements:
     version: "0.0.28.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-bahari-hai
-    version: "==0.0.20.*"
+    version: "==0.0.21.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-bh-village-games
-    version: "*"
-    channel: file:///tmp/ecoscope-workflows-custom/release/artifacts/
+    version: "0.0.5.*"
+    channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-ste
     version: "0.0.18.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
