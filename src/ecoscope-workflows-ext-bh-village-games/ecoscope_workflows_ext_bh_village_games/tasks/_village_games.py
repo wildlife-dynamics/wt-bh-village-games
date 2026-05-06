@@ -208,8 +208,8 @@ def _prep_df(df: pd.DataFrame) -> pd.DataFrame:
     obs_cat = df[obs_col].fillna("").str.lower().str.strip() if obs_col in df.columns else pd.Series("", index=df.index)
     res_raw = df[res_col].fillna("").str.lower().str.strip() if res_col in df.columns else pd.Series("", index=df.index)
 
-    df["_obs"] = obs_cat          # Observation Category 0 — specific activity name
-    df["_res"] = res_raw          # Resource Use Type — "legal use" / "illegal use"
+    df["_obs"] = obs_cat  # Observation Category 0 — specific activity name
+    df["_res"] = res_raw  # Resource Use Type — "legal use" / "illegal use"
 
     # ── Per-activity boolean flags (FIX 4 — correct detection) ─────────────
     # These mirror the exact matching logic in the antipoaching workflow:
@@ -222,13 +222,7 @@ def _prep_df(df: pd.DataFrame) -> pd.DataFrame:
     df["_is_turtle"] = df["_obs"].str.contains("poached turtle", na=False)
     df["_is_coral"] = df["_obs"].str.contains("damaging coral", na=False)
 
-    df["IsIllegal"] = (
-        df["_is_fishing"]
-        | df["_is_poaching"]
-        | df["_is_mangrove"]
-        | df["_is_arrests"]
-        | df["_is_turtle"]
-    )
+    df["IsIllegal"] = df["_is_fishing"] | df["_is_poaching"] | df["_is_mangrove"] | df["_is_arrests"] | df["_is_turtle"]
 
     # Plot_Category: most specific activity label for this row
     def _plot_cat(row: pd.Series) -> str:
@@ -289,10 +283,7 @@ def _extract_year(df: pd.DataFrame) -> str:
             parsed = pd.to_datetime(df[dcol], errors="coerce").dropna()
             if not parsed.empty:
                 return str(parsed.iloc[0].year)
-    raise ValueError(
-        "Cannot determine year from dataframe. "
-        "Expected a 'Year' column or a recognisable date column."
-    )
+    raise ValueError("Cannot determine year from dataframe. " "Expected a 'Year' column or a recognisable date column.")
 
 
 def _extract_year_quarter(df: pd.DataFrame) -> tuple[int, int]:
@@ -390,7 +381,8 @@ def _fig_to_html_constrained(fig: go.Figure, max_width: int = 600) -> str:
         "<style>"
         "* { box-sizing: border-box; margin: 0; padding: 0; }"
         f"html, body {{ width: 100%; height: 100%; overflow: hidden; background: #fff; }}"
-        f"#plotly-chart {{ width: 100% !important; max-width: {max_width}px; height: 100% !important; margin: 0 auto; display: block; }}"
+        f"#plotly-chart {{ width: 100% !important; max-width: {max_width}px; "
+        f"height: 100% !important; margin: 0 auto; display: block; }}"
         "#plotly-chart .plotly { width: 100% !important; height: 100% !important; }"
         "</style>"
         "</head><body>"
@@ -512,10 +504,7 @@ def draw_community_feedback_table(
 
     all_stations = df[station_column].dropna().unique()
     station_village = (
-        df[[station_column, village_column]]
-        .drop_duplicates()
-        .set_index(station_column)[village_column]
-        .to_dict()
+        df[[station_column, village_column]].drop_duplicates().set_index(station_column)[village_column].to_dict()
     )
 
     year_df = df[df["Year"] == year]
@@ -559,9 +548,7 @@ def draw_community_feedback_table(
 
     base["Traffic_Color"] = base["Events"].apply(_traffic_color)
     base["Message"] = base["Events"].apply(_message)
-    base["Icon"] = base["Events"].apply(
-        lambda x: thumbs_up_img if x <= high_threshold else thumbs_down_img
-    )
+    base["Icon"] = base["Events"].apply(lambda x: thumbs_up_img if x <= high_threshold else thumbs_down_img)
     base = base.sort_values("Events", ascending=False).reset_index(drop=True)
 
     n = len(base)
@@ -580,8 +567,7 @@ def draw_community_feedback_table(
     )
 
     cell_text = [
-        [row[village_column], row[station_column], row["Events"], row["Message"], ""]
-        for _, row in base.iterrows()
+        [row[village_column], row[station_column], row["Events"], row["Message"], ""] for _, row in base.iterrows()
     ]
 
     table = ax.table(
@@ -679,8 +665,18 @@ def draw_monthly_heatmap(
     villages = hm.index.tolist()
     totals = pivot["Total"].tolist()
     month_names = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
     ]
 
     # Compute height: 45px per village row + 140px for title/axes/margins
@@ -877,8 +873,7 @@ def draw_activity_leaderboard(
         str,
         Field(
             description=(
-                "Activity key: 'poaching', 'mangrove logging', "
-                "'illegal fishing', 'arrests', 'poached turtle sum'"
+                "Activity key: 'poaching', 'mangrove logging', " "'illegal fishing', 'arrests', 'poached turtle sum'"
             )
         ),
     ],
@@ -927,14 +922,9 @@ def draw_activity_leaderboard(
         adf = qdf
 
     sector_order = {f"Sector {i}": i for i in range(1, 14)}
-    all_stations = sorted(
-        df[station_column].dropna().unique(), key=lambda x: sector_order.get(x, 99)
-    )
+    all_stations = sorted(df[station_column].dropna().unique(), key=lambda x: sector_order.get(x, 99))
     village_map = (
-        df[[station_column, village_column]]
-        .drop_duplicates()
-        .set_index(station_column)[village_column]
-        .to_dict()
+        df[[station_column, village_column]].drop_duplicates().set_index(station_column)[village_column].to_dict()
     )
 
     counts = adf.groupby(station_column).size().reset_index(name="Events")
@@ -1113,6 +1103,7 @@ def draw_activity_leaderboard(
 
     lb_height = max(720, len(y_labels) * 68 + 190)
     return _fig_to_html_scrollable(fig, lb_height)
+
 
 # ─────────────────────────────────────────────
 # SHARED HELPER — ICON BAR FIGURE
@@ -1297,11 +1288,7 @@ def draw_village_icon_bar(
     logger.info(f"draw_village_icon_bar: village={village}, Q{quarter} {year}")
 
     selected_yq = pd.Period(year=year, quarter=quarter, freq="Q")
-    vdf = df[
-        (df[village_column] == village)
-        & (df["YearQuarter"] == selected_yq)
-        & df["IsIllegal"]
-    ]
+    vdf = df[(df[village_column] == village) & (df["YearQuarter"] == selected_yq) & df["IsIllegal"]]
 
     icon_b64 = {key: _img_to_base64(_icon(icons_dir, key)) for key in ACTIVITY_CONFIGS}
     fig, ibar_height = _build_icon_bar_figure(vdf, village, f"Q{quarter} {year}", icon_b64, icons_per_row)
@@ -1540,7 +1527,7 @@ def rekey_widget_by_year(
             """Recursively yield individual (index_name, op, value) triples."""
             if not cf:
                 return
-            first = cf[0] if hasattr(cf, '__getitem__') else next(iter(cf))
+            first = cf[0] if hasattr(cf, "__getitem__") else next(iter(cf))
             if isinstance(first, str):
                 # already a 3-tuple like ('Quarter', '=', '2021Q1')
                 yield tuple(cf)
@@ -1598,7 +1585,7 @@ def get_report_year(
     if "Year" in df.columns:
         years = sorted(df["Year"].dropna().astype(str).unique())
         if years:
-            return years[-1]   # latest year (sort is ascending, so last = newest)
+            return years[-1]  # latest year (sort is ascending, so last = newest)
     for dcol in ["Patrol Start Date", "Patrol_Start_Date", "event_date"]:
         if dcol in df.columns:
             parsed = pd.to_datetime(df[dcol], errors="coerce").dropna()
