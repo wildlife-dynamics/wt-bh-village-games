@@ -67,6 +67,9 @@ from ecoscope_workflows_ext_bh_village_games.tasks import (
     draw_village_icon_bar as draw_village_icon_bar,
 )
 from ecoscope_workflows_ext_bh_village_games.tasks import (
+    rekey_widget_by_year as rekey_widget_by_year,
+)
+from ecoscope_workflows_ext_bh_village_games.tasks import (
     render_vg_report as render_vg_report,
 )
 from ecoscope_workflows_ext_custom.tasks.io import html_to_png as html_to_png
@@ -3108,7 +3111,7 @@ widget_ibar_v02 = (
 
 
 # %% [markdown]
-# ## Icon bar - Magangani to Mida
+# ## Icon bar - Jacaranda to Kanani
 
 # %%
 # parameters
@@ -3125,7 +3128,7 @@ ibar_v03 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Magangani to Mida",
+        village="Jacaranda to Kanani",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3155,7 +3158,7 @@ persist_ibar_v03 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_magangani_mida",
+        filename_suffix="ibar_jacaranda_kanani",
         **persist_ibar_v03_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v03)
@@ -3211,13 +3214,13 @@ widget_ibar_v03 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v03")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Magangani to Mida", **widget_ibar_v03_params)
+    .partial(title="Icon Bar: Jacaranda to Kanani", **widget_ibar_v03_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v03)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Uyombo to Kivunjeni
+# ## Icon bar - Kanani to Darakasi
 
 # %%
 # parameters
@@ -3234,7 +3237,7 @@ ibar_v04 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Uyombo to Kivunjeni",
+        village="Kanani to Darakasi",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3264,7 +3267,7 @@ persist_ibar_v04 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_uyombo_kivunjeni",
+        filename_suffix="ibar_kanani_darakasi",
         **persist_ibar_v04_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v04)
@@ -3320,13 +3323,13 @@ widget_ibar_v04 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v04")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Uyombo to Kivunjeni", **widget_ibar_v04_params)
+    .partial(title="Icon Bar: Kanani to Darakasi", **widget_ibar_v04_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v04)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Watamu to Dongokundu
+# ## Icon bar - Kivunjeni to Wesa
 
 # %%
 # parameters
@@ -3343,7 +3346,7 @@ ibar_v05 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Watamu to Dongokundu",
+        village="Kivunjeni to Wesa",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3373,7 +3376,7 @@ persist_ibar_v05 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_watamu_dongokundu",
+        filename_suffix="ibar_kivunjeni_wesa",
         **persist_ibar_v05_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v05)
@@ -3429,13 +3432,13 @@ widget_ibar_v05 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v05")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Watamu to Dongokundu", **widget_ibar_v05_params)
+    .partial(title="Icon Bar: Kivunjeni to Wesa", **widget_ibar_v05_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v05)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Mida to Marafiki
+# ## Icon bar - Magangani to Mida
 
 # %%
 # parameters
@@ -3452,7 +3455,7 @@ ibar_v06 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Mida to Marafiki",
+        village="Magangani to Mida",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3482,7 +3485,7 @@ persist_ibar_v06 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_mida_marafiki",
+        filename_suffix="ibar_magangani_mida",
         **persist_ibar_v06_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v06)
@@ -3538,13 +3541,13 @@ widget_ibar_v06 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v06")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Mida to Marafiki", **widget_ibar_v06_params)
+    .partial(title="Icon Bar: Magangani to Mida", **widget_ibar_v06_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v06)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Mawe Ya Kati to Jacaranda
+# ## Icon bar - Marafiki to Uyombo
 
 # %%
 # parameters
@@ -3561,7 +3564,7 @@ ibar_v07 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Mawe Ya Kati to Jacaranda",
+        village="Marafiki to Uyombo",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3591,7 +3594,7 @@ persist_ibar_v07 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_mawe_jacaranda",
+        filename_suffix="ibar_marafiki_uyombo",
         **persist_ibar_v07_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v07)
@@ -3647,13 +3650,13 @@ widget_ibar_v07 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v07")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Mawe Ya Kati to Jacaranda", **widget_ibar_v07_params)
+    .partial(title="Icon Bar: Marafiki to Uyombo", **widget_ibar_v07_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v07)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Mid Mayungu to Mawe Ya Kati
+# ## Icon bar - Mawe Ya Kati to Jacaranda
 
 # %%
 # parameters
@@ -3670,7 +3673,7 @@ ibar_v08 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Mid Mayungu to Mawe Ya Kati",
+        village="Mawe Ya Kati to Jacaranda",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3700,7 +3703,7 @@ persist_ibar_v08 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_mid_mayungu_mawe",
+        filename_suffix="ibar_mawe_jacaranda",
         **persist_ibar_v08_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v08)
@@ -3756,13 +3759,13 @@ widget_ibar_v08 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v08")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Mid Mayungu to Mawe Ya Kati", **widget_ibar_v08_params)
+    .partial(title="Icon Bar: Mawe Ya Kati to Jacaranda", **widget_ibar_v08_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v08)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Marafiki to Uyombo
+# ## Icon bar - Mid Mayungu to Mawe Ya Kati
 
 # %%
 # parameters
@@ -3779,7 +3782,7 @@ ibar_v09 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Marafiki to Uyombo",
+        village="Mid Mayungu to Mawe Ya Kati",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3809,7 +3812,7 @@ persist_ibar_v09 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_marafiki_uyombo",
+        filename_suffix="ibar_mid_mayungu_mawe",
         **persist_ibar_v09_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v09)
@@ -3865,13 +3868,13 @@ widget_ibar_v09 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v09")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Marafiki to Uyombo", **widget_ibar_v09_params)
+    .partial(title="Icon Bar: Mid Mayungu to Mawe Ya Kati", **widget_ibar_v09_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v09)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Kivunjeni to Wesa
+# ## Icon bar - Mida to Marafiki
 
 # %%
 # parameters
@@ -3888,7 +3891,7 @@ ibar_v10 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Kivunjeni to Wesa",
+        village="Mida to Marafiki",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -3918,7 +3921,7 @@ persist_ibar_v10 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_kivunjeni_wesa",
+        filename_suffix="ibar_mida_marafiki",
         **persist_ibar_v10_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v10)
@@ -3974,13 +3977,13 @@ widget_ibar_v10 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v10")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Kivunjeni to Wesa", **widget_ibar_v10_params)
+    .partial(title="Icon Bar: Mida to Marafiki", **widget_ibar_v10_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v10)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Kanani to Darakasi
+# ## Icon bar - Sita to Magangani
 
 # %%
 # parameters
@@ -3997,7 +4000,7 @@ ibar_v11 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Kanani to Darakasi",
+        village="Sita to Magangani",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -4027,7 +4030,7 @@ persist_ibar_v11 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_kanani_darakasi",
+        filename_suffix="ibar_sita_magangani",
         **persist_ibar_v11_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v11)
@@ -4083,13 +4086,13 @@ widget_ibar_v11 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v11")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Kanani to Darakasi", **widget_ibar_v11_params)
+    .partial(title="Icon Bar: Sita to Magangani", **widget_ibar_v11_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v11)
 )
 
 
 # %% [markdown]
-# ## Icon bar - Jacaranda to Kanani
+# ## Icon bar - Uyombo to Kivunjeni
 
 # %%
 # parameters
@@ -4106,7 +4109,7 @@ ibar_v12 = (
     .with_tracing()
     .partial(
         df=clean_data,
-        village="Jacaranda to Kanani",
+        village="Uyombo to Kivunjeni",
         icons_dir=icons_input,
         village_column="Village",
         icons_per_row=8,
@@ -4136,7 +4139,7 @@ persist_ibar_v12 = (
     .with_tracing()
     .partial(
         root_path=os.environ["ECOSCOPE_WORKFLOWS_RESULTS"],
-        filename_suffix="ibar_jacaranda_kanani",
+        filename_suffix="ibar_uyombo_kivunjeni",
         **persist_ibar_v12_params,
     )
     .mapvalues(argnames=["text"], argvalues=ibar_v12)
@@ -4192,7 +4195,7 @@ widget_ibar_v12 = (
     create_plot_widget_single_view.set_task_instance_id("widget_ibar_v12")
     .handle_errors()
     .with_tracing()
-    .partial(title="Icon Bar: Jacaranda to Kanani", **widget_ibar_v12_params)
+    .partial(title="Icon Bar: Uyombo to Kivunjeni", **widget_ibar_v12_params)
     .mapvalues(argnames=["data"], argvalues=persist_ibar_v12)
 )
 
@@ -5058,16 +5061,16 @@ render_village_games_report = (
         lb_arrests_png=png_lb_arrests,
         ibar_darakasi_watamu_png=png_ibar_v01,
         ibar_dongokundu_sita_png=png_ibar_v02,
-        ibar_magangani_mida_png=png_ibar_v03,
-        ibar_uyombo_kivunjeni_png=png_ibar_v04,
-        ibar_watamu_dongokundu_png=png_ibar_v05,
-        ibar_mida_marafiki_png=png_ibar_v06,
-        ibar_mawe_jacaranda_png=png_ibar_v07,
-        ibar_mid_mayungu_mawe_png=png_ibar_v08,
-        ibar_marafiki_uyombo_png=png_ibar_v09,
-        ibar_kivunjeni_wesa_png=png_ibar_v10,
-        ibar_kanani_darakasi_png=png_ibar_v11,
-        ibar_jacaranda_kanani_png=png_ibar_v12,
+        ibar_magangani_mida_png=png_ibar_v06,
+        ibar_uyombo_kivunjeni_png=png_ibar_v12,
+        ibar_watamu_dongokundu_png=png_ibar_v13,
+        ibar_mida_marafiki_png=png_ibar_v10,
+        ibar_mawe_jacaranda_png=png_ibar_v08,
+        ibar_mid_mayungu_mawe_png=png_ibar_v09,
+        ibar_marafiki_uyombo_png=png_ibar_v07,
+        ibar_kivunjeni_wesa_png=png_ibar_v05,
+        ibar_kanani_darakasi_png=png_ibar_v04,
+        ibar_jacaranda_kanani_png=png_ibar_v03,
         all_villages_icon_bar_png=png_all_villages_bar,
         illegal_events_map_png=png_ie_map,
         poaching_map_png=png_poaching_map,
@@ -5081,19 +5084,397 @@ render_village_games_report = (
 
 
 # %% [markdown]
-# ## Merge yearly grouped widgets
+# ## Rekey lb poaching by year
 
 # %%
 # parameters
 
-grouped_yearly_params = dict()
+rk_lb_poaching_params = dict()
 
 # %%
 # call the task
 
 
-grouped_yearly = (
-    groupbykey.set_task_instance_id("grouped_yearly")
+rk_lb_poaching = (
+    rekey_widget_by_year.set_task_instance_id("rk_lb_poaching")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_lb_poaching, **rk_lb_poaching_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey lb mangrove by year
+
+# %%
+# parameters
+
+rk_lb_mangrove_params = dict()
+
+# %%
+# call the task
+
+
+rk_lb_mangrove = (
+    rekey_widget_by_year.set_task_instance_id("rk_lb_mangrove")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_lb_mangrove, **rk_lb_mangrove_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey lb fishing by year
+
+# %%
+# parameters
+
+rk_lb_fishing_params = dict()
+
+# %%
+# call the task
+
+
+rk_lb_fishing = (
+    rekey_widget_by_year.set_task_instance_id("rk_lb_fishing")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_lb_fishing, **rk_lb_fishing_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey lb arrests by year
+
+# %%
+# parameters
+
+rk_lb_arrests_params = dict()
+
+# %%
+# call the task
+
+
+rk_lb_arrests = (
+    rekey_widget_by_year.set_task_instance_id("rk_lb_arrests")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_lb_arrests, **rk_lb_arrests_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v01 by year
+
+# %%
+# parameters
+
+rk_ibar_v01_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v01 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v01")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v01, **rk_ibar_v01_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v02 by year
+
+# %%
+# parameters
+
+rk_ibar_v02_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v02 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v02")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v02, **rk_ibar_v02_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v03 by year
+
+# %%
+# parameters
+
+rk_ibar_v03_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v03 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v03")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v03, **rk_ibar_v03_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v04 by year
+
+# %%
+# parameters
+
+rk_ibar_v04_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v04 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v04")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v04, **rk_ibar_v04_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v05 by year
+
+# %%
+# parameters
+
+rk_ibar_v05_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v05 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v05")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v05, **rk_ibar_v05_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v06 by year
+
+# %%
+# parameters
+
+rk_ibar_v06_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v06 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v06")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v06, **rk_ibar_v06_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v07 by year
+
+# %%
+# parameters
+
+rk_ibar_v07_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v07 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v07")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v07, **rk_ibar_v07_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v08 by year
+
+# %%
+# parameters
+
+rk_ibar_v08_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v08 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v08")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v08, **rk_ibar_v08_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v09 by year
+
+# %%
+# parameters
+
+rk_ibar_v09_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v09 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v09")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v09, **rk_ibar_v09_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v10 by year
+
+# %%
+# parameters
+
+rk_ibar_v10_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v10 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v10")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v10, **rk_ibar_v10_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v11 by year
+
+# %%
+# parameters
+
+rk_ibar_v11_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v11 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v11")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v11, **rk_ibar_v11_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v12 by year
+
+# %%
+# parameters
+
+rk_ibar_v12_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v12 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v12")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v12, **rk_ibar_v12_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey ibar v13 by year
+
+# %%
+# parameters
+
+rk_ibar_v13_params = dict()
+
+# %%
+# call the task
+
+
+rk_ibar_v13 = (
+    rekey_widget_by_year.set_task_instance_id("rk_ibar_v13")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_ibar_v13, **rk_ibar_v13_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Rekey all-villages bar by year
+
+# %%
+# parameters
+
+rk_all_villages_bar_params = dict()
+
+# %%
+# call the task
+
+
+rk_all_villages_bar = (
+    rekey_widget_by_year.set_task_instance_id("rk_all_villages_bar")
+    .handle_errors()
+    .with_tracing()
+    .partial(widget=widget_all_villages_bar, **rk_all_villages_bar_params)
+    .call()
+)
+
+
+# %% [markdown]
+# ## Merge all grouped widgets
+
+# %%
+# parameters
+
+grouped_widgets_params = dict()
+
+# %%
+# call the task
+
+
+grouped_widgets = (
+    groupbykey.set_task_instance_id("grouped_widgets")
     .handle_errors()
     .with_tracing()
     .partial(
@@ -5122,51 +5503,26 @@ grouped_yearly = (
             widget_mangrove_map,
             widget_illegal_fishing_map,
             widget_arrests_map,
+            rk_lb_poaching,
+            rk_lb_mangrove,
+            rk_lb_fishing,
+            rk_lb_arrests,
+            rk_ibar_v01,
+            rk_ibar_v02,
+            rk_ibar_v03,
+            rk_ibar_v04,
+            rk_ibar_v05,
+            rk_ibar_v06,
+            rk_ibar_v07,
+            rk_ibar_v08,
+            rk_ibar_v09,
+            rk_ibar_v10,
+            rk_ibar_v11,
+            rk_ibar_v12,
+            rk_ibar_v13,
+            rk_all_villages_bar,
         ],
-        **grouped_yearly_params,
-    )
-    .call()
-)
-
-
-# %% [markdown]
-# ## Merge quarterly grouped widgets
-
-# %%
-# parameters
-
-grouped_quarterly_params = dict()
-
-# %%
-# call the task
-
-
-grouped_quarterly = (
-    groupbykey.set_task_instance_id("grouped_quarterly")
-    .handle_errors()
-    .with_tracing()
-    .partial(
-        iterables=[
-            widget_lb_poaching,
-            widget_lb_mangrove,
-            widget_lb_fishing,
-            widget_lb_arrests,
-            widget_ibar_v01,
-            widget_ibar_v02,
-            widget_ibar_v03,
-            widget_ibar_v04,
-            widget_ibar_v05,
-            widget_ibar_v06,
-            widget_ibar_v07,
-            widget_ibar_v08,
-            widget_ibar_v09,
-            widget_ibar_v10,
-            widget_ibar_v11,
-            widget_ibar_v12,
-            widget_ibar_v13,
-            widget_all_villages_bar,
-        ],
-        **grouped_quarterly_params,
+        **grouped_widgets_params,
     )
     .call()
 )
@@ -5189,7 +5545,9 @@ dashboard_widgets = (
     .handle_errors()
     .with_tracing()
     .partial(
-        single_view_widgets=[], keyed_widgets=grouped_yearly, **dashboard_widgets_params
+        single_view_widgets=[],
+        keyed_widgets=grouped_widgets,
+        **dashboard_widgets_params,
     )
     .call()
 )

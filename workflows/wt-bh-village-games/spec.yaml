@@ -11,11 +11,11 @@ requirements:
     version: "0.0.28.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-bahari-hai
-    version: "==0.0.17"
+    version: "==0.0.20.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
   - name: ecoscope-workflows-ext-bh-village-games
-    version: "0.0.4.*"
-    channel: https://repo.prefix.dev/ecoscope-workflows-custom/
+    version: "*"
+    channel: file:///tmp/ecoscope-workflows-custom/release/artifacts/
   - name: ecoscope-workflows-ext-ste
     version: "0.0.18.*"
     channel: https://repo.prefix.dev/ecoscope-workflows-custom/
@@ -41,13 +41,8 @@ requirements:
     version: ">=1.9.0"
     channel: conda-forge
 
-# rjsf-overrides:
-#   $defs:
-#     ValueGrouper.properties.index_name.oneOf:
-#       - const: Year
-#         title: Year
-#       - const: Quarter
-#         title: Quarter
+# rjsf-overrides: not needed — yearly_groupers drives the dashboard
+# and all quarterly widgets are re-keyed to Year by rekey_widget_by_year.
 
 workflow:
 
@@ -146,6 +141,7 @@ workflow:
     partial:
       groupers:
         - index_name: Quarter
+
 
   - name: Split by year
     id: split_yearly
@@ -1360,12 +1356,12 @@ workflow:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v02.return }}
 
-  - name: Icon bar - Magangani to Mida
+  - name: Icon bar - Jacaranda to Kanani
     id: ibar_v03
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Magangani to Mida"
+      village: "Jacaranda to Kanani"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1378,7 +1374,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_magangani_mida
+      filename_suffix: ibar_jacaranda_kanani
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v03.return }}
@@ -1402,17 +1398,17 @@ workflow:
     id: widget_ibar_v03
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Magangani to Mida"
+      title: "Icon Bar: Jacaranda to Kanani"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v03.return }}
 
-  - name: Icon bar - Uyombo to Kivunjeni
+  - name: Icon bar - Kanani to Darakasi
     id: ibar_v04
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Uyombo to Kivunjeni"
+      village: "Kanani to Darakasi"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1425,7 +1421,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_uyombo_kivunjeni
+      filename_suffix: ibar_kanani_darakasi
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v04.return }}
@@ -1449,17 +1445,17 @@ workflow:
     id: widget_ibar_v04
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Uyombo to Kivunjeni"
+      title: "Icon Bar: Kanani to Darakasi"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v04.return }}
 
-  - name: Icon bar - Watamu to Dongokundu
+  - name: Icon bar - Kivunjeni to Wesa
     id: ibar_v05
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Watamu to Dongokundu"
+      village: "Kivunjeni to Wesa"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1472,7 +1468,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_watamu_dongokundu
+      filename_suffix: ibar_kivunjeni_wesa
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v05.return }}
@@ -1496,17 +1492,17 @@ workflow:
     id: widget_ibar_v05
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Watamu to Dongokundu"
+      title: "Icon Bar: Kivunjeni to Wesa"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v05.return }}
 
-  - name: Icon bar - Mida to Marafiki
+  - name: Icon bar - Magangani to Mida
     id: ibar_v06
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Mida to Marafiki"
+      village: "Magangani to Mida"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1519,7 +1515,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_mida_marafiki
+      filename_suffix: ibar_magangani_mida
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v06.return }}
@@ -1543,17 +1539,17 @@ workflow:
     id: widget_ibar_v06
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Mida to Marafiki"
+      title: "Icon Bar: Magangani to Mida"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v06.return }}
 
-  - name: Icon bar - Mawe Ya Kati to Jacaranda
+  - name: Icon bar - Marafiki to Uyombo
     id: ibar_v07
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Mawe Ya Kati to Jacaranda"
+      village: "Marafiki to Uyombo"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1566,7 +1562,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_mawe_jacaranda
+      filename_suffix: ibar_marafiki_uyombo
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v07.return }}
@@ -1590,17 +1586,17 @@ workflow:
     id: widget_ibar_v07
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Mawe Ya Kati to Jacaranda"
+      title: "Icon Bar: Marafiki to Uyombo"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v07.return }}
 
-  - name: Icon bar - Mid Mayungu to Mawe Ya Kati
+  - name: Icon bar - Mawe Ya Kati to Jacaranda
     id: ibar_v08
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Mid Mayungu to Mawe Ya Kati"
+      village: "Mawe Ya Kati to Jacaranda"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1613,7 +1609,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_mid_mayungu_mawe
+      filename_suffix: ibar_mawe_jacaranda
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v08.return }}
@@ -1637,17 +1633,17 @@ workflow:
     id: widget_ibar_v08
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Mid Mayungu to Mawe Ya Kati"
+      title: "Icon Bar: Mawe Ya Kati to Jacaranda"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v08.return }}
 
-  - name: Icon bar - Marafiki to Uyombo
+  - name: Icon bar - Mid Mayungu to Mawe Ya Kati
     id: ibar_v09
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Marafiki to Uyombo"
+      village: "Mid Mayungu to Mawe Ya Kati"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1660,7 +1656,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_marafiki_uyombo
+      filename_suffix: ibar_mid_mayungu_mawe
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v09.return }}
@@ -1684,17 +1680,17 @@ workflow:
     id: widget_ibar_v09
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Marafiki to Uyombo"
+      title: "Icon Bar: Mid Mayungu to Mawe Ya Kati"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v09.return }}
 
-  - name: Icon bar - Kivunjeni to Wesa
+  - name: Icon bar - Mida to Marafiki
     id: ibar_v10
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Kivunjeni to Wesa"
+      village: "Mida to Marafiki"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1707,7 +1703,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_kivunjeni_wesa
+      filename_suffix: ibar_mida_marafiki
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v10.return }}
@@ -1731,17 +1727,17 @@ workflow:
     id: widget_ibar_v10
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Kivunjeni to Wesa"
+      title: "Icon Bar: Mida to Marafiki"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v10.return }}
 
-  - name: Icon bar - Kanani to Darakasi
+  - name: Icon bar - Sita to Magangani
     id: ibar_v11
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Kanani to Darakasi"
+      village: "Sita to Magangani"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1754,7 +1750,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_kanani_darakasi
+      filename_suffix: ibar_sita_magangani
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v11.return }}
@@ -1778,17 +1774,17 @@ workflow:
     id: widget_ibar_v11
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Kanani to Darakasi"
+      title: "Icon Bar: Sita to Magangani"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v11.return }}
 
-  - name: Icon bar - Jacaranda to Kanani
+  - name: Icon bar - Uyombo to Kivunjeni
     id: ibar_v12
     task: draw_village_icon_bar
     partial:
       df: ${{ workflow.clean_data.return }}
-      village: "Jacaranda to Kanani"
+      village: "Uyombo to Kivunjeni"
       icons_dir: ${{ workflow.icons_input.return }}
       village_column: "Village"
       icons_per_row: 8  # ← hides from UI
@@ -1801,7 +1797,7 @@ workflow:
     task: persist_text
     partial:
       root_path: ${{ env.ECOSCOPE_WORKFLOWS_RESULTS }}
-      filename_suffix: ibar_jacaranda_kanani
+      filename_suffix: ibar_uyombo_kivunjeni
     mapvalues:
       argnames: text
       argvalues: ${{ workflow.ibar_v12.return }}
@@ -1825,7 +1821,7 @@ workflow:
     id: widget_ibar_v12
     task: create_plot_widget_single_view
     partial:
-      title: "Icon Bar: Jacaranda to Kanani"
+      title: "Icon Bar: Uyombo to Kivunjeni"
     mapvalues:
       argnames: data
       argvalues: ${{ workflow.persist_ibar_v12.return }}
@@ -1928,7 +1924,7 @@ workflow:
       argvalues: ${{ workflow.persist_all_villages_bar.return }}
 
   # ════════════════════════════════════════════════════════════
-  # SECTION 7 — ECOMAPS
+  # SECTION 7 — MAPS
   # ════════════════════════════════════════════════════════════
 
   - name: Split for maps
@@ -2212,16 +2208,16 @@ workflow:
       lb_arrests_png: ${{ workflow.png_lb_arrests.return }}
       ibar_darakasi_watamu_png: ${{ workflow.png_ibar_v01.return }}
       ibar_dongokundu_sita_png: ${{ workflow.png_ibar_v02.return }}
-      ibar_magangani_mida_png: ${{ workflow.png_ibar_v03.return }}
-      ibar_uyombo_kivunjeni_png: ${{ workflow.png_ibar_v04.return }}
-      ibar_watamu_dongokundu_png: ${{ workflow.png_ibar_v05.return }}
-      ibar_mida_marafiki_png: ${{ workflow.png_ibar_v06.return }}
-      ibar_mawe_jacaranda_png: ${{ workflow.png_ibar_v07.return }}
-      ibar_mid_mayungu_mawe_png: ${{ workflow.png_ibar_v08.return }}
-      ibar_marafiki_uyombo_png: ${{ workflow.png_ibar_v09.return }}
-      ibar_kivunjeni_wesa_png: ${{ workflow.png_ibar_v10.return }}
-      ibar_kanani_darakasi_png: ${{ workflow.png_ibar_v11.return }}
-      ibar_jacaranda_kanani_png: ${{ workflow.png_ibar_v12.return }}
+      ibar_magangani_mida_png: ${{ workflow.png_ibar_v06.return }}
+      ibar_uyombo_kivunjeni_png: ${{ workflow.png_ibar_v12.return }}
+      ibar_watamu_dongokundu_png: ${{ workflow.png_ibar_v13.return }}
+      ibar_mida_marafiki_png: ${{ workflow.png_ibar_v10.return }}
+      ibar_mawe_jacaranda_png: ${{ workflow.png_ibar_v08.return }}
+      ibar_mid_mayungu_mawe_png: ${{ workflow.png_ibar_v09.return }}
+      ibar_marafiki_uyombo_png: ${{ workflow.png_ibar_v07.return }}
+      ibar_kivunjeni_wesa_png: ${{ workflow.png_ibar_v05.return }}
+      ibar_kanani_darakasi_png: ${{ workflow.png_ibar_v04.return }}
+      ibar_jacaranda_kanani_png: ${{ workflow.png_ibar_v03.return }}
       all_villages_icon_bar_png: ${{ workflow.png_all_villages_bar.return }}
       illegal_events_map_png: ${{ workflow.png_ie_map.return }}
       poaching_map_png: ${{ workflow.png_poaching_map.return }}
@@ -2232,12 +2228,123 @@ workflow:
   # ════════════════════════════════════════════════════════════
   # SECTION 9 — DASHBOARD
   # ════════════════════════════════════════════════════════════
+  # ── Rekey quarterly leaderboard widgets by Year ────────────
+  - name: Rekey lb poaching by year
+    id: rk_lb_poaching
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_lb_poaching.return }}
 
-  - name: Merge yearly grouped widgets
-    id: grouped_yearly
+  - name: Rekey lb mangrove by year
+    id: rk_lb_mangrove
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_lb_mangrove.return }}
+
+  - name: Rekey lb fishing by year
+    id: rk_lb_fishing
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_lb_fishing.return }}
+
+  - name: Rekey lb arrests by year
+    id: rk_lb_arrests
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_lb_arrests.return }}
+
+  # ── Rekey per-village icon bar widgets by Year ─────────────
+  - name: Rekey ibar v01 by year
+    id: rk_ibar_v01
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v01.return }}
+
+  - name: Rekey ibar v02 by year
+    id: rk_ibar_v02
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v02.return }}
+
+  - name: Rekey ibar v03 by year
+    id: rk_ibar_v03
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v03.return }}
+
+  - name: Rekey ibar v04 by year
+    id: rk_ibar_v04
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v04.return }}
+
+  - name: Rekey ibar v05 by year
+    id: rk_ibar_v05
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v05.return }}
+
+  - name: Rekey ibar v06 by year
+    id: rk_ibar_v06
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v06.return }}
+
+  - name: Rekey ibar v07 by year
+    id: rk_ibar_v07
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v07.return }}
+
+  - name: Rekey ibar v08 by year
+    id: rk_ibar_v08
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v08.return }}
+
+  - name: Rekey ibar v09 by year
+    id: rk_ibar_v09
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v09.return }}
+
+  - name: Rekey ibar v10 by year
+    id: rk_ibar_v10
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v10.return }}
+
+  - name: Rekey ibar v11 by year
+    id: rk_ibar_v11
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v11.return }}
+
+  - name: Rekey ibar v12 by year
+    id: rk_ibar_v12
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v12.return }}
+
+  - name: Rekey ibar v13 by year
+    id: rk_ibar_v13
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_ibar_v13.return }}
+
+  - name: Rekey all-villages bar by year
+    id: rk_all_villages_bar
+    task: rekey_widget_by_year
+    partial:
+      widget: ${{ workflow.widget_all_villages_bar.return }}
+
+  # ── Single groupbykey with ALL widgets now Year-keyed ──────
+  - name: Merge all grouped widgets
+    id: grouped_widgets
     task: groupbykey
     partial:
       iterables:
+        # yearly widgets (already Year-keyed)
         - ${{ workflow.widget_tbl_poaching.return }}
         - ${{ workflow.widget_tbl_mangrove.return }}
         - ${{ workflow.widget_tbl_fishing.return }}
@@ -2262,37 +2369,32 @@ workflow:
         - ${{ workflow.widget_mangrove_map.return }}
         - ${{ workflow.widget_illegal_fishing_map.return }}
         - ${{ workflow.widget_arrests_map.return }}
-
-  - name: Merge quarterly grouped widgets
-    id: grouped_quarterly
-    task: groupbykey
-    partial:
-      iterables:
-        - ${{ workflow.widget_lb_poaching.return }}
-        - ${{ workflow.widget_lb_mangrove.return }}
-        - ${{ workflow.widget_lb_fishing.return }}
-        - ${{ workflow.widget_lb_arrests.return }}
-        - ${{ workflow.widget_ibar_v01.return }}
-        - ${{ workflow.widget_ibar_v02.return }}
-        - ${{ workflow.widget_ibar_v03.return }}
-        - ${{ workflow.widget_ibar_v04.return }}
-        - ${{ workflow.widget_ibar_v05.return }}
-        - ${{ workflow.widget_ibar_v06.return }}
-        - ${{ workflow.widget_ibar_v07.return }}
-        - ${{ workflow.widget_ibar_v08.return }}
-        - ${{ workflow.widget_ibar_v09.return }}
-        - ${{ workflow.widget_ibar_v10.return }}
-        - ${{ workflow.widget_ibar_v11.return }}
-        - ${{ workflow.widget_ibar_v12.return }}
-        - ${{ workflow.widget_ibar_v13.return }}
-        - ${{ workflow.widget_all_villages_bar.return }}
+        # quarterly widgets re-keyed to Year
+        - ${{ workflow.rk_lb_poaching.return }}
+        - ${{ workflow.rk_lb_mangrove.return }}
+        - ${{ workflow.rk_lb_fishing.return }}
+        - ${{ workflow.rk_lb_arrests.return }}
+        - ${{ workflow.rk_ibar_v01.return }}
+        - ${{ workflow.rk_ibar_v02.return }}
+        - ${{ workflow.rk_ibar_v03.return }}
+        - ${{ workflow.rk_ibar_v04.return }}
+        - ${{ workflow.rk_ibar_v05.return }}
+        - ${{ workflow.rk_ibar_v06.return }}
+        - ${{ workflow.rk_ibar_v07.return }}
+        - ${{ workflow.rk_ibar_v08.return }}
+        - ${{ workflow.rk_ibar_v09.return }}
+        - ${{ workflow.rk_ibar_v10.return }}
+        - ${{ workflow.rk_ibar_v11.return }}
+        - ${{ workflow.rk_ibar_v12.return }}
+        - ${{ workflow.rk_ibar_v13.return }}
+        - ${{ workflow.rk_all_villages_bar.return }}
 
   - name: Assemble dashboard widgets
     id: dashboard_widgets
     task: assemble_dashboard_widgets
     partial:
       single_view_widgets: []
-      keyed_widgets: ${{ workflow.grouped_yearly.return }}
+      keyed_widgets: ${{ workflow.grouped_widgets.return }}
 
   - name: Village Games Dashboard
     id: vg_dashboard
